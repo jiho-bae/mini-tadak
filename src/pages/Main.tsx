@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
+import RoomCard from '../components/RoomCard';
 import { RoomType } from '../types';
 
 type LocationState = {
@@ -44,23 +45,9 @@ export default function Main() {
     <main>
       <Header onClickLogOut={redirectLoginPage} userId={loginUser.userId} />
       <section className="pack gap(10)">
-        {rooms.map((room) => {
-          const { id, title, description, nowHeadcount, maxHeadcount, owner } = room;
-
-          return (
-            <div
-              className="room-card w(250) h(150) vbox bg(white) r(15) p(15) cursor(pointer) hover:bg(#74b9ff)"
-              key={id}>
-              <h4 className="bold font(18)">{title}</h4>
-              <p>{description}</p>
-              <div className="flex"></div>
-              <p>주인장 : {owner.nickname}</p>
-              <p>
-                <span className="c(blue)">{nowHeadcount}</span>명 / <span className="c(red)">{maxHeadcount}</span>명
-              </p>
-            </div>
-          );
-        })}
+        {rooms.map((room, idx) => (
+          <RoomCard key={room.id} cardIdx={idx} {...room} />
+        ))}
       </section>
     </main>
   );
