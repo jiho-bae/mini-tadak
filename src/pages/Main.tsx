@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
 import { RoomType } from '../types';
+
+type LocationState = {
+  userId: string;
+};
 
 export default function Main() {
   const navigate = useNavigate();
   const location = useLocation();
-  const loginUser = location.state;
+  const loginUser = location.state as LocationState;
   const [loading, setLoading] = useState(true);
   const [rooms, setRooms] = useState<RoomType[]>([]);
 
@@ -18,12 +23,16 @@ export default function Main() {
     setLoading(false);
   }, []);
 
+  const redirectLoginPage = useCallback(() => {
+    navigate('/', { replace: true });
+  }, [navigate]);
+
   useEffect(() => {
     if (!loginUser) {
-      navigate('/', { replace: true });
+      redirectLoginPage();
       return;
     }
-  }, [loginUser, navigate]);
+  }, [loginUser, navigate, redirectLoginPage]);
 
   useEffect(() => {
     getRoom();
@@ -33,6 +42,7 @@ export default function Main() {
 
   return (
     <main>
+      <Header onClickLogOut={redirectLoginPage} userId={loginUser.userId} />
       <section className="pack gap(10)">
         {rooms.map((room) => {
           const { id, title, description, nowHeadcount, maxHeadcount, owner } = room;
