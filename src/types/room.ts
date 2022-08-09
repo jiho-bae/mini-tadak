@@ -8,7 +8,7 @@ export default interface RoomType {
   description: string;
   nowHeadcount: number;
   maxHeadcount: number;
-  owner?: UserType;
+  owner: UserType;
   title: string;
   roomType: string;
   updatedAt: string;
