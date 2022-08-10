@@ -22,7 +22,7 @@ export default function Main() {
 
   const enterClickedRoom = useCallback(() => {
     const { uuid } = roomDataRef.current as RoomType;
-    navigate(`/room/${uuid}`, { replace: true });
+    navigate(`/room/${uuid}`);
   }, [navigate]);
 
   const fetchRoomList = useCallback(async () => {
@@ -43,7 +43,7 @@ export default function Main() {
 
   const canIEnterRoom = useCallback((roomData: RoomType) => {
     const { nowHeadcount, maxHeadcount } = roomData;
-    return nowHeadcount >= maxHeadcount;
+    return nowHeadcount <= maxHeadcount;
   }, []);
 
   const onClickRoomCard = useCallback(
