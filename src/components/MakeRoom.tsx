@@ -3,10 +3,7 @@ import RectButton from './common/RectButton';
 import Select from './common/Select';
 import useInput from '../hooks/useInput';
 import { INPUT, PLACEHOLDER_TXT, SELECT_TEXT, RoomNames } from '../utils/constant';
-
-type MakeRoomProps = {
-  userId: string;
-};
+import { RoomType } from '../types';
 
 type OptionType = {
   value: number;
@@ -20,8 +17,13 @@ export const roomOptions: OptionType[] = [
   { value: 2, label: RoomNames.campfire },
 ];
 
+type MakeRoomProps = {
+  userId: string;
+  enterRoom: (uuid: string, roomInfo: RoomType) => void;
+};
+
 const MakeRoom = (props: MakeRoomProps): JSX.Element => {
-  const { userId } = props;
+  const { userId, enterRoom } = props;
   const [roomTitle, onChangeRoomTitle] = useInput('');
   const [description, onChangeDescription] = useInput('');
   const [roomType, setRoomType] = useState('');
@@ -32,10 +34,31 @@ const MakeRoom = (props: MakeRoomProps): JSX.Element => {
   const onChangeAdminNumber = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setMaxHeadcount((e.target[e.target.selectedIndex] as HTMLOptionElement).value);
 
+  const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!roomTitle || !description || !roomType || !maxHeadcount) return alert('칸을 다 채우세요.');
+
+    const requestBody = {
+      userId,
+      title: roomTitle,
+      description,
+      maxHeadcount: Number(maxHeadcount),
+      roomType,
+    };
+
+    const res = await fetch('/api/room', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+    });
+    const { data: roomInfo } = await res.json();
+    // 기존 서버에서 유저 인증(토큰)을 요구함
+    // enterRoom(roomInfo.uuid, data);
+  };
+
   return (
     <div className="w(100%) bg(white) p(10) r(10)">
       <h4 className="font(24) bold text-center">방 만들기</h4>
-      <form className="hbox">
+      <form className="hbox" onSubmit={onSubmitForm}>
         <div className="w(80%) p(10) vbox gap(10)">
           <input
             type="text"

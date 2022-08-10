@@ -15,16 +15,17 @@ export default function Main() {
   const loginUser = location.state as LocationState;
   const [loading, setLoading] = useState(true);
   const [rooms, setRooms] = useState<RoomType[]>([]);
-  const roomDataRef = useRef<RoomType>();
 
   const redirectLoginPage = useCallback(() => {
     navigate('/', { replace: true });
   }, [navigate]);
 
-  const enterClickedRoom = useCallback(() => {
-    const { uuid } = roomDataRef.current as RoomType;
-    navigate(`/room/${uuid}`);
-  }, [navigate]);
+  const enterClickedRoom = useCallback(
+    (uuid: string, roomInfo: RoomType) => {
+      navigate(`/room/${uuid}`, { state: roomInfo });
+    },
+    [navigate],
+  );
 
   const fetchRoomList = useCallback(async () => {
     const res = await fetch('/api/room?type=타닥타닥&search=&page=1&take=15');
@@ -57,8 +58,7 @@ export default function Main() {
         return;
       }
 
-      roomDataRef.current = clickedRoomInfo;
-      enterClickedRoom();
+      enterClickedRoom(uuid, clickedRoomInfo);
     },
     [rooms, fetchClickedRoomInfoByUuid, canIEnterRoom, enterClickedRoom],
   );
@@ -79,7 +79,7 @@ export default function Main() {
   return (
     <main className="vbox">
       <Header onClickLogOut={redirectLoginPage} userId={loginUser.userId} />
-      <MakeRoom userId={loginUser.userId} />
+      <MakeRoom userId={loginUser.userId} enterRoom={enterClickedRoom} />
       <div className="space(30)"></div>
       <hr className="b(1/solid/white)" />
       <div className="space(30)"></div>
