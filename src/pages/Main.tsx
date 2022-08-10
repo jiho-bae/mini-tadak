@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import RoomCard from '../components/RoomCard';
+import MakeRoom from '../components/MakeRoom';
 import { RoomType } from '../types';
 
 type LocationState = {
@@ -76,8 +77,12 @@ export default function Main() {
   if (loading) return <div>loading...</div>;
 
   return (
-    <main>
+    <main className="vbox">
       <Header onClickLogOut={redirectLoginPage} userId={loginUser.userId} />
+      <MakeRoom userId={loginUser.userId} />
+      <div className="space(30)"></div>
+      <hr className="b(1/solid/white)" />
+      <div className="space(30)"></div>
       <section className="pack gap(10)" onClick={onClickRoomCard}>
         {rooms.map((room, idx) => (
           <RoomCard key={room.id} cardIdx={idx} {...room} />
