@@ -1,31 +1,26 @@
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
+import { postLogin } from '../apis';
+import { userBaseLoginOptions } from '../apis/options';
 import RectButton from '../components/common/RectButton';
 import AuthFormLayout from '../components/layout/AuthFormLayout';
 import useInput from '../hooks/useInput';
 import { UserType } from '../types';
-
-type LoginProps = {};
+import { isEmpty } from '../utils/utils';
 
 const linkOption = {
   to: '/join',
   text: '회원가입 하러가기',
 };
 
-export default function Login({}: LoginProps) {
+export default function Login() {
   const navigate = useNavigate();
-  const [userId, onChangeUserId] = useInput('');
+  const location = useLocation();
+  const passedUserId = location.state as string;
+  const [userId, onChangeUserId] = useInput(passedUserId ?? '');
   const [password, onChangePassword] = useInput('');
 
-  const goToMain = (userData: UserType) => {
+  const goToMain = (userData: UserType | undefined) => {
     navigate('/main', { state: { userData } });
-  };
-
-  const isEmpty = (userId: string) => {
-    if (userId === '') {
-      return true;
-    }
-
-    return false;
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,24 +32,10 @@ export default function Login({}: LoginProps) {
       return;
     }
 
-    const userBaseLoginOption = {
-      email: `${userId}@mini.tadak`,
-      password: `${password}1234@`,
-    };
+    const baseOption = userBaseLoginOptions(userId, password);
+    const { isOk, data } = await postLogin(baseOption);
 
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify(userBaseLoginOption),
-    });
-    const { statusCode, data } = await res.json();
-
-    if (statusCode === 201) {
-      goToMain(data);
-    }
+    if (isOk) goToMain(data);
   };
 
   return (
@@ -67,12 +48,13 @@ export default function Login({}: LoginProps) {
         <div>
           <label htmlFor="user_password">비밀번호</label>
           <input
-            type="current-password"
+            type="password"
             value={password}
             onChange={onChangePassword}
             id="user_password"
             className="m(0/5/0/5)"
             maxLength={12}
+            autoComplete="on"
           />
         </div>
       </div>

@@ -1,6 +1,25 @@
+const emailTail = process.env.REACT_APP_EMAIL_TAIL;
+const pwdTail = process.env.REACT_APP_PWD_TAIL;
+
 export type BodyType = {
   [key: string]: string | number | null;
 };
+
+export function userBaseLoginOptions(userId: string, password: string) {
+  return {
+    email: `${userId}${emailTail}`,
+    password: `${password}${pwdTail}`,
+  };
+}
+
+export function userBaseJoinOptions(userId: string, password: string) {
+  return {
+    email: `${userId}${emailTail}`,
+    password: `${password}${pwdTail}`,
+    nickname: userId,
+    devField: 1,
+  };
+}
 
 export function simpleOptions(method: string): RequestInit {
   return {

@@ -1,6 +1,5 @@
-import 'dotenv/config';
-
 const baseUrl = process.env.REACT_APP_SERVER_URL ?? '';
+
 const TAKE_ROOM_UNIT = 15;
 
 type TypeRoom = '타닥타닥' | '캠프파이어';
