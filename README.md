@@ -15,6 +15,11 @@
 - 실시간통신 - [Agora](https://www.agora.io/en/), socket.io
 - 이외에도 적용할 기술이 추가될 수 있습니다.
 
+### 몇가지 고민의 흔적
+
+- [인증 방식 개선 - refresh token 도입하기](https://tar-keyboard-2bc.notion.site/JWT-596bf75945f64a46b5b6fd01fc640c98)
+- 추가될 예정입니다.
+
 ### 각 페이지 소개
 
 #### 🦀 로그인 페이지
