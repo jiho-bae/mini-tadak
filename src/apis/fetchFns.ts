@@ -3,32 +3,38 @@ import { getOptions, postOptions, patchOptions, deleteOptions, BodyType } from '
 import fetcher from './fetcher';
 import { getUrl } from './apiUtils';
 
-export async function fetchGet<T>(url: string, query = ''): Promise<HTTPResponse<T>> {
+export async function fetchGet<T>(url: string, query = '', isAuth = false): Promise<HTTPResponse<T>> {
   const path = query ? `${url}?${query}` : url;
   const requestUrl = getUrl(path);
-  const response = await fetcher<T>(requestUrl, getOptions());
+  const options = (await getOptions(isAuth)) as RequestInit;
+  const response = await fetcher<T>(requestUrl, options);
   return response;
 }
 
-export async function fetchPost<T>(url: string, body: BodyType = {}): Promise<HTTPResponse<T>> {
+export async function fetchPost<T>(url: string, body: BodyType = {}, isAuth = false): Promise<HTTPResponse<T>> {
   const requestUrl = getUrl(url);
-  const response = await fetcher<T>(requestUrl, postOptions(body));
+  const options = (await postOptions(body, isAuth)) as RequestInit;
+  const response = await fetcher<T>(requestUrl, options);
   return response;
 }
 
-export async function fetchPatch<T>(url: string, body: BodyType = {}): Promise<HTTPResponse<T>> {
+export async function fetchPatch<T>(url: string, body: BodyType = {}, isAuth = false): Promise<HTTPResponse<T>> {
   const requestUrl = getUrl(url);
-  const response = await fetcher<T>(requestUrl, patchOptions(body));
+  const options = (await patchOptions(body, isAuth)) as RequestInit;
+  const response = await fetcher<T>(requestUrl, options);
   return response;
 }
 
-export function fetchDelete(url: string): void {
+export async function fetchDelete<T>(url: string, isAuth = false): Promise<HTTPResponse<T>> {
   const requestUrl = getUrl(url);
-  fetcher(requestUrl, deleteOptions());
+  const options = (await deleteOptions(isAuth)) as RequestInit;
+  const response = await fetcher<T>(requestUrl, options);
+  return response;
 }
 
-export async function fetchDeleteImage<T>(url: string): Promise<HTTPResponse<T>> {
+export async function fetchDeleteImage<T>(url: string, isAuth = false): Promise<HTTPResponse<T>> {
   const requestUrl = getUrl(url);
-  const response = await fetcher<T>(requestUrl, deleteOptions());
+  const options = (await deleteOptions(isAuth)) as RequestInit;
+  const response = await fetcher<T>(requestUrl, options);
   return response;
 }

@@ -22,8 +22,8 @@ export const postLogin = async (body: PostLogin): Promise<HTTPResponse<PostLogin
   return response;
 };
 
-export const postLogout = async (): Promise<HTTPResponse<boolean>> => {
-  const response = await fetchPost<boolean>('/api/auth/logout');
+export const postLogout = async (isAuth: boolean): Promise<HTTPResponse<boolean>> => {
+  const response = await fetchPost<boolean>('/api/auth/logout', undefined, isAuth);
   return response;
 };
 
@@ -113,7 +113,8 @@ interface DeleteRoom {
   uuid: string;
 }
 
-export const deleteRoom = ({ uuid }: DeleteRoom): void => fetchDelete(`/api/room/${uuid}`);
+export const deleteRoom = ({ uuid }: DeleteRoom): Promise<HTTPResponse<boolean>> =>
+  fetchDelete(`/api/room/${uuid}`, true);
 
 export const postEnterRoom = async (uuid: string): Promise<HTTPResponse<boolean>> => {
   const response = await fetchPost<boolean>(`/api/room/${uuid}/join`);
