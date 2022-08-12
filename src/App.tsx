@@ -3,13 +3,17 @@ import MainLayout from './components/layout/MainLayout';
 import Router from './components/Router';
 import { auth } from './apis/auth';
 import { useNavigate } from 'react-router-dom';
+import { getUserByToken } from './apis';
 
 function App() {
   const navigate = useNavigate();
 
   const getUser = useCallback(async () => {
-    await auth.requestAccessToken();
-    navigate('/main');
+    const { isOk, data } = await getUserByToken();
+    if (isOk && data) {
+      auth.setAccessToken(data.token);
+      navigate('/main');
+    }
   }, [navigate]);
 
   useEffect(() => {

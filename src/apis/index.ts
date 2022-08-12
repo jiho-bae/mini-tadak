@@ -22,8 +22,8 @@ export const postLogin = async (body: PostLogin): Promise<HTTPResponse<PostLogin
   return response;
 };
 
-export const postLogout = async (isAuth: boolean): Promise<HTTPResponse<boolean>> => {
-  const response = await fetchPost<boolean>('/api/auth/logout', undefined, isAuth);
+export const postLogout = async (): Promise<HTTPResponse<boolean>> => {
+  const response = await fetchPost<boolean>('/api/auth/logout', undefined, true);
   return response;
 };
 

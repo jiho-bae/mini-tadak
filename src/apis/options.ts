@@ -28,9 +28,7 @@ export function userBaseJoinOptions(userId: string, password: string) {
   };
 }
 
-export async function simpleOptions(method: string, isAuth: boolean) {
-  const authHeader = await getAuthHeader(isAuth);
-
+export async function simpleOptions(method: string, authHeader = {}) {
   return {
     method,
     headers: {
@@ -41,8 +39,9 @@ export async function simpleOptions(method: string, isAuth: boolean) {
   };
 }
 
-export function getOptions(isAuth = false) {
-  return simpleOptions('GET', isAuth);
+export async function getOptions(isAuth = false) {
+  const authHeader = await getAuthHeader(isAuth);
+  return simpleOptions('GET', authHeader);
 }
 
 export async function postOptions(body: BodyType, isAuth = false) {
@@ -59,7 +58,7 @@ export async function postOptions(body: BodyType, isAuth = false) {
         credentials: 'include',
         body: JSON.stringify(body),
       }
-    : simpleOptions('POST', false);
+    : simpleOptions('POST', authHeader);
 }
 
 export async function patchOptions(body: BodyType, isAuth = false) {
@@ -76,9 +75,11 @@ export async function patchOptions(body: BodyType, isAuth = false) {
         credentials: 'include',
         body: JSON.stringify(body),
       }
-    : simpleOptions('PATCH', false);
+    : simpleOptions('PATCH', authHeader);
 }
 
-export function deleteOptions(isAuth = false) {
-  return simpleOptions('DELETE', isAuth);
+export async function deleteOptions(isAuth = false) {
+  const authHeader = await getAuthHeader(isAuth);
+
+  return simpleOptions('DELETE', authHeader);
 }
