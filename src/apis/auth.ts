@@ -1,3 +1,4 @@
+import { LocalStorage } from '../utils/localStorage';
 import { getUserByToken } from './index';
 
 export type SetTokenParams = {
@@ -6,7 +7,7 @@ export type SetTokenParams = {
   expiredAt: number;
 };
 
-export const auth = (function () {
+export const auth = (function (setAuthFlag, clearAuthFlag) {
   let _token: string | null | undefined = null;
   let _serverTime = null;
   let _expiredTime: number | null = null;
@@ -29,11 +30,15 @@ export const auth = (function () {
       return _token ?? false;
     },
     setAccessToken({ accessToken, now, expiredAt }: SetTokenParams) {
+      setAuthFlag();
+
       _token = accessToken;
       _serverTime = now;
       _expiredTime = expiredAt;
     },
     clearAccessToken() {
+      clearAuthFlag();
+
       _token = null;
       _serverTime = null;
       _expiredTime = null;
@@ -53,4 +58,4 @@ export const auth = (function () {
       }
     },
   };
-})();
+})(LocalStorage.setAuthFlag, LocalStorage.removeAuthFlag);
