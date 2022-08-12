@@ -1,18 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import RoomCard from '../components/RoomCard';
 import MakeRoom from '../components/MakeRoom';
 import { RoomType } from '../types';
-
-type LocationState = {
-  userId: string;
-};
+import { auth } from '../apis/auth';
 
 export default function Main() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const loginUser = location.state as LocationState;
   const [loading, setLoading] = useState(true);
   const [rooms, setRooms] = useState<RoomType[]>([]);
 
@@ -64,11 +59,11 @@ export default function Main() {
   );
 
   useEffect(() => {
-    if (!loginUser) {
+    if (!auth.hasAccessToken()) {
       redirectLoginPage();
       return;
     }
-  }, [loginUser, navigate, redirectLoginPage]);
+  }, [navigate, redirectLoginPage]);
 
   useEffect(() => {
     fetchRoomList();
@@ -78,8 +73,8 @@ export default function Main() {
 
   return (
     <main className="vbox">
-      <Header onClickLogOut={redirectLoginPage} userId={loginUser.userId} />
-      <MakeRoom userId={loginUser.userId} enterRoom={enterClickedRoom} />
+      <Header onClickLogOut={redirectLoginPage} userId={'유저 상태 추가후 수정예정'} />
+      <MakeRoom userId={'유저 상태 추가후 수정예정'} enterRoom={enterClickedRoom} />
       <div className="space(30)"></div>
       <hr className="b(1/solid/white)" />
       <div className="space(30)"></div>

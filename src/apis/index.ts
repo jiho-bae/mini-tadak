@@ -8,8 +8,17 @@ interface PostLogin {
   password: string;
 }
 
-export const postLogin = async (body: PostLogin): Promise<HTTPResponse<UserType>> => {
-  const response = await fetchPost<UserType>('/api/auth/login', { ...body });
+interface PostLoginResponse {
+  userInfo: UserType;
+  token: {
+    accessToken: string;
+    now: number;
+    expiredAt: number;
+  };
+}
+
+export const postLogin = async (body: PostLogin): Promise<HTTPResponse<PostLoginResponse>> => {
+  const response = await fetchPost<PostLoginResponse>('/api/auth/login', { ...body });
   return response;
 };
 
@@ -58,8 +67,8 @@ export const deleteImage = async (): Promise<HTTPResponse<UserType>> => {
   return response;
 };
 
-export const getUserByToken = async (): Promise<HTTPResponse<UserType>> => {
-  const response = await fetchGet<UserType>('/api/auth/token');
+export const getUserByToken = async (): Promise<HTTPResponse<PostLoginResponse>> => {
+  const response = await fetchGet<PostLoginResponse>('/api/auth/token');
   return response;
 };
 

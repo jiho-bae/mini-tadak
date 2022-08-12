@@ -4,8 +4,8 @@ import { userBaseLoginOptions } from '../apis/options';
 import RectButton from '../components/common/RectButton';
 import AuthFormLayout from '../components/layout/AuthFormLayout';
 import useInput from '../hooks/useInput';
-import { UserType } from '../types';
 import { isEmpty } from '../utils/utils';
+import { auth } from '../apis/auth';
 
 const linkOption = {
   to: '/join',
@@ -19,9 +19,7 @@ export default function Login() {
   const [userId, onChangeUserId] = useInput(passedUserId ?? '');
   const [password, onChangePassword] = useInput('');
 
-  const goToMain = (userData: UserType | undefined) => {
-    navigate('/main', { state: { userData } });
-  };
+  const goToMain = () => navigate('/main');
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,8 +32,10 @@ export default function Login() {
 
     const baseOption = userBaseLoginOptions(userId, password);
     const { isOk, data } = await postLogin(baseOption);
-
-    if (isOk) goToMain(data);
+    if (isOk && data) {
+      auth.setAccessToken(data.token);
+      goToMain();
+    }
   };
 
   return (
