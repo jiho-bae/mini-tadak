@@ -1,8 +1,9 @@
 import { useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import Router from './components/Router';
 import { auth } from './apis/auth';
-import { useNavigate } from 'react-router-dom';
+import { LocalStorage } from './utils/localStorage';
 import { getUserByToken } from './apis';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   }, [navigate]);
 
   useEffect(() => {
+    if (!LocalStorage.validateAuthFlag()) return;
     if (!auth.hasAccessToken()) {
       getUser();
     }
