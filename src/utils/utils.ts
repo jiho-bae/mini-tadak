@@ -15,6 +15,15 @@ export const isPassword = (password: string): boolean => {
   return regExp.test(password);
 };
 
+export const isEmpty = (str: string) => {
+  if (str === '') {
+    alert('빈칸을 모두 채워주세요.');
+    return true;
+  }
+
+  return false;
+};
+
 export const getPrevYear = (now: Date, number: number): Date => {
   const tomorrow = new Date(now.setDate(now.getDate() + 1));
   const prevYear = new Date(tomorrow.setFullYear(tomorrow.getFullYear() - number));
