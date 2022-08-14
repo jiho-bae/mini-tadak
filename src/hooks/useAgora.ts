@@ -18,7 +18,7 @@ type UseAgoraProps = {
 type UseAgoraReturns = {
   agoraUsers: IAgoraRTCRemoteUser[];
   isStreaming: boolean;
-  toggleIsStreaming: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleIsStreaming: () => void;
 };
 
 function useAgora({
