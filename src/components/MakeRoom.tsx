@@ -4,6 +4,7 @@ import Select from './common/Select';
 import useInput from '../hooks/useInput';
 import { INPUT, PLACEHOLDER_TXT, SELECT_TEXT, RoomNames } from '../utils/constant';
 import { RoomType } from '../types';
+import { postRoom } from '../apis';
 
 type OptionType = {
   value: number;
@@ -18,7 +19,7 @@ export const roomOptions: OptionType[] = [
 ];
 
 type MakeRoomProps = {
-  userId: string;
+  userId: number;
   enterRoom: (uuid: string, roomInfo: RoomType) => void;
 };
 
@@ -46,13 +47,10 @@ const MakeRoom = (props: MakeRoomProps): JSX.Element => {
       roomType,
     };
 
-    const res = await fetch('/api/room', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-    });
-    const { data: roomInfo } = await res.json();
-    // 기존 서버에서 유저 인증(토큰)을 요구함
-    // enterRoom(roomInfo.uuid, data);
+    const { isOk, data } = await postRoom(requestBody);
+    if (isOk && data) {
+      enterRoom(data.uuid, data);
+    }
   };
 
   return (

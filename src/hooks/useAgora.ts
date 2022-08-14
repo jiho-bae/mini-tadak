@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { UserType } from '../types';
-import { useClient } from '../agora/config';
+import { getClient } from '../agora/config';
 import { IAgoraRTCRemoteUser, ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-sdk-ng';
 import { userPublished, userUnpublished, userChanged, muteTrack, publishTrack } from '../agora/util';
 
@@ -16,12 +16,12 @@ type UseAgoraProps = {
 };
 
 type UseAgoraReturns = {
-  users: IAgoraRTCRemoteUser[];
-  start: boolean;
-  setStart: React.Dispatch<React.SetStateAction<boolean>>;
+  agoraUsers: IAgoraRTCRemoteUser[];
+  isStreaming: boolean;
+  toggleIsStreaming: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function useTadakAgora({
+function useAgora({
   agoraAppId,
   agoraToken,
   uuid,
@@ -31,19 +31,23 @@ function useTadakAgora({
   track,
   tracks,
 }: UseAgoraProps): UseAgoraReturns {
-  const client = useClient();
-  const [users, setUsers] = useState<IAgoraRTCRemoteUser[]>([]);
-  const [start, setStart] = useState(false);
+  const client = getClient();
+  const [agoraUsers, setAgoraUsers] = useState<IAgoraRTCRemoteUser[]>([]);
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const addUsers = useCallback((user: IAgoraRTCRemoteUser) => {
-    setUsers((prevUsers) => [...prevUsers, user]);
+    setAgoraUsers((prevUsers) => [...prevUsers, user]);
   }, []);
 
   const removeUsers = useCallback((user: IAgoraRTCRemoteUser) => {
-    setUsers((prevUsers) => {
+    setAgoraUsers((prevUsers) => {
       return prevUsers.filter((User) => User.uid !== user.uid);
     });
   }, []);
+
+  const toggleIsStreaming = () => {
+    setIsStreaming((prev) => !prev);
+  };
 
   const listenAgora = useCallback(() => {
     client.on('user-published', userPublished(agoraType, client, addUsers));
@@ -57,7 +61,7 @@ function useTadakAgora({
     await publishTrack(client, track || tracks);
     await muteTrack({ track, tracks });
 
-    setStart(true);
+    toggleIsStreaming();
   }, [uuid, agoraAppId, agoraToken, client, track, tracks, userInfo]);
 
   useEffect(() => {
@@ -67,7 +71,7 @@ function useTadakAgora({
     }
   }, [listenAgora, startAgora, ready, track, tracks]);
 
-  return { users, start, setStart };
+  return { agoraUsers, isStreaming, toggleIsStreaming };
 }
 
-export default useTadakAgora;
+export default useAgora;

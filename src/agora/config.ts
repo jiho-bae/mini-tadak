@@ -15,10 +15,10 @@ const config: ClientConfig = {
   codec: 'vp8',
 };
 
-const useClient = createClient(config);
-const useMicrophoneAndCameraTracks = createMicrophoneAndCameraTracks();
-const useMicrophoneTrack = createMicrophoneAudioTrack();
-const useScreenVideoTrack = (): {
+const getClient = createClient(config);
+const getMicrophoneAndCameraTracks = createMicrophoneAndCameraTracks();
+const getMicrophoneTrack = createMicrophoneAudioTrack();
+const getScreenVideoTrack = (): {
   ready: boolean;
   tracks: ILocalVideoTrack | [ILocalVideoTrack, ILocalAudioTrack];
   error: AgoraRTCError | null;
@@ -33,4 +33,4 @@ const useScreenVideoTrack = (): {
   return screenShare();
 };
 
-export { useClient, useMicrophoneAndCameraTracks, useMicrophoneTrack, useScreenVideoTrack };
+export { getClient, getMicrophoneAndCameraTracks, getMicrophoneTrack, getScreenVideoTrack };

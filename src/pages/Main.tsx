@@ -89,7 +89,7 @@ export default function Main() {
   return (
     <main className="vbox">
       <Header onClickLogOut={onClickLogOut} userId={user.nickname} />
-      <MakeRoom userId={user.nickname as string} enterRoom={enterClickedRoom} />
+      <MakeRoom userId={user.id as number} enterRoom={enterClickedRoom} />
       <div className="space(30)"></div>
       <hr className="b(1/solid/white)" />
       <div className="space(30)"></div>
