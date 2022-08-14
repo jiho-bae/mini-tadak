@@ -9,7 +9,7 @@ interface CircleButtonProps {
   onClick?: () => void;
 }
 
-const CircleButton = ({ text, icon, className, color, onClick }: CircleButtonProps): JSX.Element => {
+const CircleButton = ({ text, icon, className = '', color, onClick }: CircleButtonProps): JSX.Element => {
   return (
     <button color={color} className={'circle-button ' + className} onClick={onClick}>
       {icon}

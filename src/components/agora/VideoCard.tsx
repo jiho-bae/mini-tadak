@@ -58,7 +58,7 @@ const VideoCard = ({ videoTrack, audioTrack, displayName }: VideoCardProps): JSX
     <div className={videoCardWrapperStyle}>
       <div className={videoCardStyle} onDoubleClick={onDoubleClickVideoCard} ref={videoRef}>
         {videoTrack && <AgoraVideoPlayer className="w(100%) h(100%)" videoTrack={videoTrack} />}
-        {isSpeak && <div className={volumeVisualizerStyle}></div>}
+        {isSpeak && <div className={volumeVisualizerStyle} />}
       </div>
       <div className={displayNameStyle}>{displayName}</div>
     </div>

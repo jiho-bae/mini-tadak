@@ -1,14 +1,16 @@
 import ReactLoading from 'react-loading';
 
 type LoaderProps = {
-  isWholeScreen?: boolean;
   color?: string;
+  displayText?: string;
 };
 
-export default function Loader({ isWholeScreen = false, color = '#75bfff' }: LoaderProps): JSX.Element {
+export default function Loader({ color = '#75bfff', displayText = '' }: LoaderProps): JSX.Element {
   return (
-    <div className={'w(100%) h(20%) text-center ' + isWholeScreen && 'fixed top(0) left(0) height(100%)'}>
+    <div className={'vbox pack text-center'}>
       <ReactLoading type="spin" color={color} />
+      <div className="space(14)"></div>
+      <span className="c(black) opacity(0.5)">{displayText}</span>
     </div>
   );
 }
