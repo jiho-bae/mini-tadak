@@ -8,76 +8,59 @@ import {
 } from 'agora-rtc-react';
 
 import { SCREEN_SHARE_HEIGHT, SPEAK } from '../../utils/constant';
+import { FullScreenDivType, openFullScreen } from '../../utils/utils';
 import { VIDEO_BOX } from '../../utils/styleConstant';
 
+const videoCardWrapperStyle = 'vbox';
 const videoCardStyle = `pack relative w(${VIDEO_BOX.width}) h(${VIDEO_BOX.width}) r(10) overflow(hidden)`;
 const volumeVisualizerStyle = `w(${VIDEO_BOX.width}) h(${VIDEO_BOX.width}) absolute right(0) b(3/solid/#75bfff) r(10)`;
+const displayNameStyle = 'pack w(100%) font(20) ';
 
 interface VideoCardProps {
   videoTrack: ICameraVideoTrack | IRemoteVideoTrack | undefined;
   audioTrack: IMicrophoneAudioTrack | IRemoteAudioTrack | undefined;
+  displayName: string;
 }
 
-interface DivWithFullscreen extends HTMLDivElement {
-  msRequestFullscreen?: () => void;
-  mozRequestFullScreen?: () => void;
-  webkitRequestFullscreen?: () => void;
-}
-
-const VideoCard = ({ videoTrack, audioTrack }: VideoCardProps): JSX.Element => {
+const VideoCard = ({ videoTrack, audioTrack, displayName }: VideoCardProps): JSX.Element => {
   const [isSpeak, setIsSpeak] = useState(false);
-  const isInterval = useRef(false);
-  const videoRef = useRef<DivWithFullscreen>(null);
-  const initInterval = useCallback(
-    function () {
-      if (!isInterval.current) {
-        setInterval(() => {
-          if (audioTrack) {
-            setIsSpeak(audioTrack?.getVolumeLevel() > SPEAK.volume);
-          }
-        }, SPEAK.visualTime);
-      }
-      isInterval.current = true;
-    },
-    [isInterval, audioTrack],
-  );
+  const intervalRef = useRef<any>(false);
+  const videoRef = useRef<FullScreenDivType>(null);
 
-  function openFullscreen() {
-    if (videoRef.current) {
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen();
-      } else if (videoRef.current.mozRequestFullScreen) {
-        /* Firefox */
-        videoRef.current.mozRequestFullScreen();
-      } else if (videoRef.current.webkitRequestFullscreen) {
-        /* Chrome, Safari & Opera */
-        videoRef.current.webkitRequestFullscreen();
-      } else if (videoRef.current.msRequestFullscreen) {
-        /* IE/Edge */
-        videoRef.current.msRequestFullscreen();
+  const clearVolumeVisualizerInterval = useCallback(() => {
+    clearInterval(intervalRef.current);
+    intervalRef.current = false;
+  }, []);
+
+  const initVolumneVisualizerInterval = useCallback(() => {
+    if (intervalRef.current) return;
+
+    intervalRef.current = setInterval(() => {
+      if (audioTrack) {
+        setIsSpeak(audioTrack?.getVolumeLevel() > SPEAK.volume);
       }
-    }
+    }, SPEAK.visualTime);
+  }, [intervalRef, audioTrack]);
+
+  function onDoubleClickVideoCard() {
+    videoTrack?.getCurrentFrameData()?.height === SCREEN_SHARE_HEIGHT && openFullScreen(videoRef);
   }
 
   useEffect(() => {
     if (audioTrack) {
-      initInterval();
+      initVolumneVisualizerInterval();
+    } else {
+      clearVolumeVisualizerInterval();
     }
-  }, [audioTrack, initInterval]);
+  }, [audioTrack, initVolumneVisualizerInterval, clearVolumeVisualizerInterval]);
 
   return (
-    <div
-      className={videoCardStyle}
-      onDoubleClick={() => {
-        if (videoTrack?.getCurrentFrameData()?.height === SCREEN_SHARE_HEIGHT) {
-          openFullscreen();
-        }
-      }}
-      ref={videoRef}>
-      {videoTrack && (
-        <AgoraVideoPlayer style={{ height: '100%', width: '100%' }} className="video" videoTrack={videoTrack} />
-      )}
-      {isSpeak && <div className={volumeVisualizerStyle}></div>}
+    <div className={videoCardWrapperStyle}>
+      <div className={videoCardStyle} onDoubleClick={onDoubleClickVideoCard} ref={videoRef}>
+        {videoTrack && <AgoraVideoPlayer className="w(100%) h(100%)" videoTrack={videoTrack} />}
+        {isSpeak && <div className={volumeVisualizerStyle}></div>}
+      </div>
+      <div className={displayNameStyle}>{displayName}</div>
     </div>
   );
 };

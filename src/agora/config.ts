@@ -7,30 +7,34 @@ import {
   ILocalAudioTrack,
   ILocalVideoTrack,
   AgoraRTCError,
+  ScreenVideoTrackInitConfig,
 } from 'agora-rtc-react';
 import { SCREEN_SHARE_HEIGHT } from '../utils/constant';
 
-const config: ClientConfig = {
+type ScreenShareReturnType = {
+  ready: boolean;
+  tracks: ILocalVideoTrack | [ILocalVideoTrack, ILocalAudioTrack];
+  error: AgoraRTCError | null;
+};
+
+const clientConfig: ClientConfig = {
   mode: 'rtc',
   codec: 'vp8',
 };
 
-const getClient = createClient(config);
-const getMicrophoneAndCameraTracks = createMicrophoneAndCameraTracks();
-const getMicrophoneTrack = createMicrophoneAudioTrack();
-const getScreenVideoTrack = (): {
-  ready: boolean;
-  tracks: ILocalVideoTrack | [ILocalVideoTrack, ILocalAudioTrack];
-  error: AgoraRTCError | null;
-} => {
-  const screenShare = createScreenVideoTrack(
-    {
-      encoderConfig: `${SCREEN_SHARE_HEIGHT}p_1`,
-      optimizationMode: 'detail',
-    },
-    'disable',
-  );
-  return screenShare();
+const screenShareConfig: ScreenVideoTrackInitConfig = {
+  encoderConfig: `${SCREEN_SHARE_HEIGHT}p_1`,
+  optimizationMode: 'detail',
 };
+const screenShareWithVideo = 'disable';
+
+const getClient = createClient(clientConfig);
+
+const getMicrophoneAndCameraTracks = createMicrophoneAndCameraTracks();
+
+const getMicrophoneTrack = createMicrophoneAudioTrack();
+
+const getScreenVideoTrack = (): ScreenShareReturnType =>
+  createScreenVideoTrack(screenShareConfig, screenShareWithVideo)();
 
 export { getClient, getMicrophoneAndCameraTracks, getMicrophoneTrack, getScreenVideoTrack };
