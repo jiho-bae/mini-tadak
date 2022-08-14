@@ -1,10 +1,14 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { getMicrophoneAndCameraTracks } from '../agora/config';
 import { userState } from '../hooks/recoil/atom';
+import { getMicrophoneAndCameraTracks } from '../agora/config';
 import useAgora from '../hooks/useAgora';
-import { RoomType } from '../types';
+
+import AgoraVideoCardList from '../components/agora/VideoCardList';
+import Loader from '../components/Loader';
+
 import { PAGE_NAME } from '../utils/constant';
+import { RoomType } from '../types';
 
 type LocationStateType = {
   state: RoomType;
@@ -20,8 +24,8 @@ export default function MiniTadak() {
   const { agoraUsers, isStreaming, toggleIsStreaming } = useAgora(agoraOptions);
 
   if (!isStreaming) {
-    return <div>loading....</div>;
+    return <Loader isWholeScreen={true} />;
   }
 
-  return <div>ready to streaming!!</div>;
+  return <div>{tracks && <AgoraVideoCardList agoraUsers={agoraUsers} tracks={tracks} />}</div>;
 }
