@@ -5,6 +5,7 @@ import { getMicrophoneAndCameraTracks } from '../agora/config';
 import useAgora from '../hooks/useAgora';
 
 import AgoraVideoCardList from '../components/agora/VideoCardList';
+import VideoController from '../components/agora/VideoController';
 import Loader from '../components/Loader';
 
 import { PAGE_NAME } from '../utils/constant';
@@ -16,7 +17,7 @@ type LocationStateType = {
 
 export default function MiniTadak() {
   const {
-    state: { agoraAppId, agoraToken, uuid },
+    state: { agoraAppId, agoraToken, uuid, owner },
   } = useLocation() as LocationStateType;
   const userInfo = useRecoilValue(userState);
   const { ready, tracks } = getMicrophoneAndCameraTracks();
@@ -24,8 +25,21 @@ export default function MiniTadak() {
   const { agoraUsers, isStreaming, toggleIsStreaming } = useAgora(agoraOptions);
 
   if (!isStreaming) {
-    return <Loader isWholeScreen={true} />;
+    return (
+      <div className="w(100%) h(100%) pack">
+        <Loader displayText="방에 입장중입니다..." />
+      </div>
+    );
   }
 
-  return <div>{tracks && <AgoraVideoCardList agoraUsers={agoraUsers} tracks={tracks} />}</div>;
+  return (
+    <div>
+      {tracks && (
+        <>
+          <AgoraVideoCardList agoraUsers={agoraUsers} tracks={tracks} />
+          <VideoController tracks={tracks} toggleIsStreaming={toggleIsStreaming} uuid={uuid} ownerId={owner?.id} />
+        </>
+      )}
+    </div>
+  );
 }
