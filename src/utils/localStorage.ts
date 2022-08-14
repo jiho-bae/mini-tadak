@@ -1,7 +1,10 @@
 export const LocalStorage = (function () {
   const setAuthFlag = () => localStorage.setItem('auth', 'auth');
 
-  const removeAuthFlag = () => localStorage.removeItem('auth');
+  const removeAuthFlag = () => {
+    console.log('remove user');
+    localStorage.removeItem('auth');
+  };
 
   const validateAuthFlag = () => {
     const authFlag = localStorage.getItem('auth');

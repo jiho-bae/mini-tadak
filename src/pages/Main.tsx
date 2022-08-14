@@ -23,7 +23,7 @@ export default function Main() {
 
   const onClickLogOut = useCallback(() => {
     postLogout();
-    auth.clearAccessToken();
+    auth.clearAccessToken(true);
     redirectLoginPage();
   }, [redirectLoginPage]);
 
@@ -78,8 +78,10 @@ export default function Main() {
   }, [navigate, redirectLoginPage]);
 
   useEffect(() => {
-    fetchRoomList();
-  }, [fetchRoomList]);
+    if (user.nickname) {
+      fetchRoomList();
+    }
+  }, [fetchRoomList, user]);
 
   if (loading) return <div>loading...</div>;
 

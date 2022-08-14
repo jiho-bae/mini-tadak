@@ -23,9 +23,9 @@ export const auth = (function (setAuthFlag, clearAuthFlag) {
   }
 
   return {
-    hasAccessToken() {
+    hasAccessToken(isClearLocalStorage = false) {
       if (!validateToken()) {
-        this.clearAccessToken();
+        this.clearAccessToken(isClearLocalStorage);
       }
       return _token ?? false;
     },
@@ -36,8 +36,10 @@ export const auth = (function (setAuthFlag, clearAuthFlag) {
       _serverTime = now;
       _expiredTime = expiredAt;
     },
-    clearAccessToken() {
-      clearAuthFlag();
+    clearAccessToken(isClearLocalStorage = false) {
+      if (isClearLocalStorage) {
+        clearAuthFlag();
+      }
 
       _token = null;
       _serverTime = null;
