@@ -1,11 +1,15 @@
 import { useNavigate, useLocation } from 'react-router';
-import { postLogin } from '../apis';
-import { userBaseLoginOptions } from '../apis/options';
-import RectButton from '../components/common/RectButton';
+import { useSetRecoilState } from 'recoil';
+
 import AuthFormLayout from '../components/layout/AuthFormLayout';
-import useInput from '../hooks/useInput';
+import RectButton from '../components/common/RectButton';
+
+import { userBaseLoginOptions } from '../apis/options';
 import { isEmpty } from '../utils/utils';
+import useInput from '../hooks/useInput';
+import { postLogin } from '../apis';
 import { auth } from '../apis/auth';
+import { userState } from '../App';
 
 const linkOption = {
   to: '/join',
@@ -16,6 +20,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const passedUserId = location.state as string;
+  const setUser = useSetRecoilState(userState);
   const [userId, onChangeUserId] = useInput(passedUserId ?? '');
   const [password, onChangePassword] = useInput('');
 
@@ -34,6 +39,7 @@ export default function Login() {
     const { isOk, data } = await postLogin(baseOption);
     if (isOk && data) {
       auth.setAccessToken(data.token);
+      setUser(data.userInfo);
       goToMain();
     }
   };

@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+
 import Header from '../components/Header';
 import RoomCard from '../components/RoomCard';
 import MakeRoom from '../components/MakeRoom';
+
+import { userState } from '../App';
 import { RoomType } from '../types';
 import { auth } from '../apis/auth';
 import { postLogout } from '../apis';
@@ -11,6 +15,7 @@ export default function Main() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [rooms, setRooms] = useState<RoomType[]>([]);
+  const user = useRecoilValue(userState);
 
   const redirectLoginPage = useCallback(() => {
     navigate('/', { replace: true });
@@ -80,8 +85,8 @@ export default function Main() {
 
   return (
     <main className="vbox">
-      <Header onClickLogOut={onClickLogOut} userId={'유저 상태 추가후 수정예정'} />
-      <MakeRoom userId={'유저 상태 추가후 수정예정'} enterRoom={enterClickedRoom} />
+      <Header onClickLogOut={onClickLogOut} userId={user.nickname} />
+      <MakeRoom userId={user.nickname as string} enterRoom={enterClickedRoom} />
       <div className="space(30)"></div>
       <hr className="b(1/solid/white)" />
       <div className="space(30)"></div>
