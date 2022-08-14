@@ -3,6 +3,7 @@ import { UserType } from '../types';
 import { getClient } from '../agora/config';
 import { IAgoraRTCRemoteUser, ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-sdk-ng';
 import { userPublished, userUnpublished, userChanged, muteTrack, publishTrack } from '../agora/util';
+import useToggle from './useToggle';
 
 type UseAgoraProps = {
   agoraAppId: string;
@@ -33,10 +34,10 @@ function useAgora({
 }: UseAgoraProps): UseAgoraReturns {
   const client = getClient();
   const [agoraUsers, setAgoraUsers] = useState<IAgoraRTCRemoteUser[]>([]);
-  const [isStreaming, setIsStreaming] = useState(false);
+  const [isStreaming, toggleIsStreaming] = useToggle(false);
 
   const addUsers = useCallback((user: IAgoraRTCRemoteUser) => {
-    setAgoraUsers((prevUsers) => [...prevUsers, user]);
+    setAgoraUsers((prevUsers) => [...new Set([...prevUsers, user])]);
   }, []);
 
   const removeUsers = useCallback((user: IAgoraRTCRemoteUser) => {
@@ -44,10 +45,6 @@ function useAgora({
       return prevUsers.filter((User) => User.uid !== user.uid);
     });
   }, []);
-
-  const toggleIsStreaming = () => {
-    setIsStreaming((prev) => !prev);
-  };
 
   const listenAgora = useCallback(() => {
     client.on('user-published', userPublished(agoraType, client, addUsers));
@@ -62,7 +59,7 @@ function useAgora({
     await muteTrack({ track, tracks });
 
     toggleIsStreaming();
-  }, [uuid, agoraAppId, agoraToken, client, track, tracks, userInfo]);
+  }, [uuid, agoraAppId, agoraToken, client, track, tracks, userInfo, toggleIsStreaming]);
 
   useEffect(() => {
     if (ready && (track || tracks)) {

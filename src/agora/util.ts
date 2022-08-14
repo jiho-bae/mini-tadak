@@ -1,11 +1,12 @@
 import { IAgoraRTCClient, IAgoraRTCRemoteUser, ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-sdk-ng';
+import { PAGE_NAME } from '../utils/constant';
 
 export const userPublished = (
   agoraType: string,
   client: IAgoraRTCClient,
   setState: (user: IAgoraRTCRemoteUser) => void,
 ) => {
-  if (agoraType === 'tadak') {
+  if (agoraType === PAGE_NAME.tadak) {
     return async (user: IAgoraRTCRemoteUser, mediaType: 'audio' | 'video') => {
       await client.subscribe(user, mediaType);
       console.log('subscribe success');
@@ -29,7 +30,7 @@ export const userPublished = (
 };
 
 export const userUnpublished = (agoraType: string) => {
-  if (agoraType === 'tadak') {
+  if (agoraType === PAGE_NAME.tadak) {
     return (user: IAgoraRTCRemoteUser, type: 'audio' | 'video') => {
       console.log('unpublished', user, type);
       if (type === 'audio') {
