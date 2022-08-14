@@ -9,7 +9,7 @@ import { isEmpty } from '../utils/utils';
 import useInput from '../hooks/useInput';
 import { postLogin } from '../apis';
 import { auth } from '../apis/auth';
-import { userState } from '../App';
+import { userState } from '../hooks/recoil/atom';
 
 const linkOption = {
   to: '/join',

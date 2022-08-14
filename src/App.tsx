@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { atom, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import MainLayout from './components/layout/MainLayout';
 import Router from './components/Router';
@@ -8,12 +8,7 @@ import Router from './components/Router';
 import { auth } from './apis/auth';
 import { LocalStorage } from './utils/localStorage';
 import { getUserByToken } from './apis';
-import { UserType } from './types';
-
-export const userState = atom<UserType>({
-  key: 'userState',
-  default: {},
-});
+import { userState } from './hooks/recoil/atom';
 
 function App() {
   const navigate = useNavigate();

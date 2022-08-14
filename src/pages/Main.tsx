@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import Header from '../components/Header';
 import RoomCard from '../components/RoomCard';
 import MakeRoom from '../components/MakeRoom';
 
-import { userState } from '../App';
+import { userState } from '../hooks/recoil/atom';
 import { RoomType } from '../types';
 import { auth } from '../apis/auth';
 import { postLogout } from '../apis';
@@ -15,7 +15,7 @@ export default function Main() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [rooms, setRooms] = useState<RoomType[]>([]);
-  const user = useRecoilValue(userState);
+  const [user, setUser] = useRecoilState(userState);
 
   const redirectLoginPage = useCallback(() => {
     navigate('/', { replace: true });
@@ -24,8 +24,9 @@ export default function Main() {
   const onClickLogOut = useCallback(() => {
     postLogout();
     auth.clearAccessToken(true);
+    setUser({});
     redirectLoginPage();
-  }, [redirectLoginPage]);
+  }, [redirectLoginPage, setUser]);
 
   const enterClickedRoom = useCallback(
     (uuid: string, roomInfo: RoomType) => {
