@@ -12,8 +12,9 @@ import { FullScreenDivType, openFullScreen } from '../../utils/utils';
 import { VIDEO_BOX } from '../../utils/styleConstant';
 
 const videoCardWrapperStyle = 'vbox';
-const videoCardStyle = `pack relative w(${VIDEO_BOX.width}) h(${VIDEO_BOX.width}) r(10) overflow(hidden)`;
-const volumeVisualizerStyle = `w(${VIDEO_BOX.width}) h(${VIDEO_BOX.width}) absolute right(0) b(3/solid/#75bfff) r(10)`;
+const videoCardStyle = `pack relative w(${VIDEO_BOX.width}) h(${VIDEO_BOX.height}) r(10) overflow(hidden) `;
+const videoWaitingCardStyle = `pack relative w(${VIDEO_BOX.width}) h(${VIDEO_BOX.height}) r(10) bg(#30336b) color(white) font(24)`;
+const volumeVisualizerStyle = `w(${VIDEO_BOX.width}) h(${VIDEO_BOX.height}) absolute right(0) b(3/solid/#75bfff) r(1rem)`;
 const displayNameStyle = 'pack w(100%) font(20) ';
 
 interface VideoCardProps {
@@ -57,7 +58,11 @@ const VideoCard = ({ videoTrack, audioTrack, displayName }: VideoCardProps): JSX
   return (
     <div className={videoCardWrapperStyle}>
       <div className={videoCardStyle} onDoubleClick={onDoubleClickVideoCard} ref={videoRef}>
-        {videoTrack && <AgoraVideoPlayer className="w(100%) h(100%)" videoTrack={videoTrack} />}
+        {videoTrack ? (
+          <AgoraVideoPlayer className="w(100%) h(100%)" videoTrack={videoTrack} />
+        ) : (
+          <div className={videoWaitingCardStyle}>Video Off</div>
+        )}
         {isSpeak && <div className={volumeVisualizerStyle} />}
       </div>
       <div className={displayNameStyle}>{displayName}</div>

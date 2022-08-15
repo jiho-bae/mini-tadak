@@ -7,19 +7,20 @@
   justify-content: center;
   align-items: center;
   margin: 0 24px;
-  width: 50px;
-  height: 50px;
-  font-size: 20px;
+  width: 5rem;
+  height: 5rem;
+  font-size: 2.2rem;
   padding: 5px;
-  background: blue;
+  background: #a29bfe;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   color: white;
 }
 .circle-button:hover {
-  background: blue;
+  background: #ff7675;
   opacity: 0.7;
 }
 .circle-button:active {
-  background: blue;
+  background: #ff7675;
   transform: scale(0.9);
   transition: background 0.1s;
 }

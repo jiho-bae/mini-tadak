@@ -3,9 +3,7 @@ import { userState } from '../../hooks/recoil/atom';
 import { useRecoilValue } from 'recoil';
 
 import AgoraVideoCard from './VideoCard';
-
-const videoContainerStyle = 'pack h(100%)';
-const videoGridStyle = 'p(20) grid grid-cols(3) gap(10)';
+const videoContainerStyle = 'pack h(90%)';
 
 interface VideoCardListProps {
   agoraUsers: IAgoraRTCRemoteUser[];
@@ -16,6 +14,7 @@ const VideoCardList = ({ agoraUsers, tracks }: VideoCardListProps): JSX.Element 
   const [myAudioTrack, myVideoTrack] = tracks;
   const userInfo = useRecoilValue(userState);
   const displayName = `${userInfo.nickname}(나)`;
+  const videoGridStyle = `p(20) grid grid-cols(${Math.min(agoraUsers.length + 1, 3)}) gap(10)`;
 
   return (
     <div className={videoContainerStyle}>

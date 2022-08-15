@@ -33,7 +33,7 @@ export default function MiniTadak() {
   }
 
   return (
-    <div>
+    <div className="w(100%) h(100%)">
       {tracks && (
         <>
           <AgoraVideoCardList agoraUsers={agoraUsers} tracks={tracks} />

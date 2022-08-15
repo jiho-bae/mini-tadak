@@ -7,11 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import useToggle from '../../hooks/useToggle';
 import { getClient } from '../../agora/config';
 import CircleButton from '../common/CircleButton';
-import ScreenShare from '../../agora/ScreenShare';
+import ScreenShare from './ScreenShare';
 
-const buttonContainerStyle = 'relative';
-const videoControlsStyle = 'fixed pack right(0)';
-const getOutButtonStyle = 'fixed top(0) right(10)';
+const buttonContainerStyle = 'w(100%) h(10%) relative';
+const videoControlsStyle = 'pack';
+const getOutButtonStyle = 'fixed top(0) top(10) right(10)';
 
 interface VideoControllerProps {
   tracks: [IMicrophoneAudioTrack, ICameraVideoTrack];
@@ -49,7 +49,7 @@ const VideoController = ({ tracks, toggleIsStreaming, uuid, ownerId }: VideoCont
     myVideoTrack.close();
 
     toggleIsStreaming();
-  }, [client, tracks, toggleIsStreaming]);
+  }, [client, myAudioTrack, myVideoTrack, toggleIsStreaming]);
 
   //   useEffect(() => {
   //     return history.listen(() => {

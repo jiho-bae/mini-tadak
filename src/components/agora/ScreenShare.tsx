@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { IAgoraRTCClient, ICameraVideoTrack } from 'agora-rtc-react';
-import { getScreenVideoTrack } from './config';
+import { getScreenVideoTrack } from '../../agora/config';
 
 interface ScreenShareProps {
   client: IAgoraRTCClient;
