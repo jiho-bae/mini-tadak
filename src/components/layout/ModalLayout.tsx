@@ -9,8 +9,8 @@ interface ModalProps {
 }
 
 const modalContainerStyle = `w(100%) top(0) block`;
-const blackBackgroundStyle = `w(100vw) h(100vh) top(0) left(0) absolute bg(rgba(0,0,0,0.7)) z(2)`;
-const contentStyle = `pack p(5rem/5rem/4rem/5rem) w(${MODAL.width}) h${MODAL.height} top(30vh) left(25vw) absolute bg(white) r(10) z(5)`;
+const blackBackgroundStyle = `w(100vw) h(100vh) top(0) left(0) absolute bg(rgba(0,0,0,0.7))`;
+const contentStyle = `pack p(5rem/5rem/4rem/5rem) w(${MODAL.width}) h${MODAL.height} top(30vh) left(25vw) absolute bg(white) r(10)`;
 const contentInputStyle = ' .modal-input:c(red)';
 const titleStyle = `font(2.4rem) bold text-center`;
 

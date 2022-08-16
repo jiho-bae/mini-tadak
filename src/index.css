@@ -73,3 +73,19 @@ input,
 select {
   background-color: transparent;
 }
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+#toast-fadeInOut {
+  animation: fade-in-out 3s ease-in-out;
+}

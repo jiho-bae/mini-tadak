@@ -9,6 +9,7 @@ import { auth } from './apis/auth';
 import { LocalStorage } from './utils/localStorage';
 import { getUserByToken } from './apis';
 import { userState } from './hooks/recoil/user/atom';
+import Toast from './components/Toast';
 
 function App() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ function App() {
       <MainLayout>
         <Router />
       </MainLayout>
+      <Toast />
     </div>
   );
 }
