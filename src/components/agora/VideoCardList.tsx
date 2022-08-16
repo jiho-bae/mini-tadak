@@ -1,5 +1,5 @@
 import { IAgoraRTCRemoteUser, IMicrophoneAudioTrack, ICameraVideoTrack } from 'agora-rtc-react';
-import { userState } from '../../hooks/recoil/atom';
+import { userState } from '../../hooks/recoil/user/atom';
 import { useRecoilValue } from 'recoil';
 
 import AgoraVideoCard from './VideoCard';

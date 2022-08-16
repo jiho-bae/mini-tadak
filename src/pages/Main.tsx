@@ -5,7 +5,7 @@ import { useRecoilState } from 'recoil';
 import Header from '../components/Header';
 import RoomCard from '../components/RoomCard';
 
-import { userState } from '../hooks/recoil/atom';
+import { userState } from '../hooks/recoil/user/atom';
 import { enterRoom } from '../utils/history';
 import { RoomType } from '../types';
 import { auth } from '../apis/auth';

@@ -8,7 +8,7 @@ import Router from './components/Router';
 import { auth } from './apis/auth';
 import { LocalStorage } from './utils/localStorage';
 import { getUserByToken } from './apis';
-import { userState } from './hooks/recoil/atom';
+import { userState } from './hooks/recoil/user/atom';
 
 function App() {
   const navigate = useNavigate();
