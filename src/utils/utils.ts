@@ -128,3 +128,26 @@ export const drawLineChartDots = (
   });
   ctx.stroke();
 };
+
+export interface FullScreenDivType extends HTMLDivElement {
+  msRequestFullscreen?: () => void;
+  mozRequestFullScreen?: () => void;
+  webkitRequestFullscreen?: () => void;
+}
+
+export function openFullScreen(myRef: React.RefObject<FullScreenDivType>) {
+  if (myRef.current) {
+    if (myRef.current.requestFullscreen) {
+      myRef.current.requestFullscreen();
+    } else if (myRef.current.mozRequestFullScreen) {
+      /* Firefox */
+      myRef.current.mozRequestFullScreen();
+    } else if (myRef.current.webkitRequestFullscreen) {
+      /* Chrome, Safari & Opera */
+      myRef.current.webkitRequestFullscreen();
+    } else if (myRef.current.msRequestFullscreen) {
+      /* IE/Edge */
+      myRef.current.msRequestFullscreen();
+    }
+  }
+}

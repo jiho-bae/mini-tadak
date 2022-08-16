@@ -81,7 +81,7 @@ interface PostRoom {
 }
 
 export const postRoom = async (body: PostRoom): Promise<HTTPResponse<RoomType>> => {
-  const response = await fetchPost<RoomType>('/api/room', { ...body });
+  const response = await fetchPost<RoomType>('/api/room', { ...body }, true);
   return response;
 };
 
