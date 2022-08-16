@@ -12,8 +12,8 @@ import { FullScreenDivType, openFullScreen } from '../../utils/utils';
 import { VIDEO_BOX } from '../../utils/styleConstant';
 
 const videoCardWrapperStyle = 'vbox';
-const videoCardStyle = `pack relative w(${VIDEO_BOX.width}) h(${VIDEO_BOX.height}) r(10) overflow(hidden) `;
-const videoWaitingCardStyle = `pack relative w(${VIDEO_BOX.width}) h(${VIDEO_BOX.height}) r(10) bg(#30336b) color(white) font(24)`;
+const videoCardStyle = `pack relative w(${VIDEO_BOX.width}) h(${VIDEO_BOX.height}) r(10) clip`;
+const videoWaitingCardStyle = `pack relative w(${VIDEO_BOX.width}) h(${VIDEO_BOX.height}) r(10) bg(#30336b) c(white) font(24)`;
 const volumeVisualizerStyle = `w(${VIDEO_BOX.width}) h(${VIDEO_BOX.height}) absolute right(0) b(3/solid/#75bfff) r(1rem)`;
 const displayNameStyle = 'pack w(100%) font(20) ';
 

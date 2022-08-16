@@ -4,9 +4,9 @@ import { useRecoilState } from 'recoil';
 
 import Header from '../components/Header';
 import RoomCard from '../components/RoomCard';
-import MakeRoom from '../components/MakeRoom';
 
 import { userState } from '../hooks/recoil/atom';
+import { enterRoom } from '../utils/history';
 import { RoomType } from '../types';
 import { auth } from '../apis/auth';
 import { postLogout } from '../apis';
@@ -27,13 +27,6 @@ export default function Main() {
     setUser({});
     redirectLoginPage();
   }, [redirectLoginPage, setUser]);
-
-  const enterClickedRoom = useCallback(
-    (uuid: string, roomInfo: RoomType) => {
-      navigate(`/room/${uuid}`, { state: roomInfo });
-    },
-    [navigate],
-  );
 
   const fetchRoomList = useCallback(async () => {
     const res = await fetch('/api/room?type=타닥타닥&search=&page=1&take=15');
@@ -66,9 +59,9 @@ export default function Main() {
         return;
       }
 
-      enterClickedRoom(uuid, clickedRoomInfo);
+      enterRoom(uuid, clickedRoomInfo, navigate);
     },
-    [rooms, fetchClickedRoomInfoByUuid, canIEnterRoom, enterClickedRoom],
+    [rooms, fetchClickedRoomInfoByUuid, canIEnterRoom, navigate],
   );
 
   useEffect(() => {
@@ -89,7 +82,6 @@ export default function Main() {
   return (
     <main className="vbox">
       <Header onClickLogOut={onClickLogOut} userId={user.nickname} />
-      <MakeRoom userId={user.id as number} enterRoom={enterClickedRoom} />
       <div className="space(30)"></div>
       <hr className="b(1/solid/white)" />
       <div className="space(30)"></div>

@@ -1,9 +1,13 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import RectButton from './common/RectButton';
 import Select from './common/Select';
+import ModalLayout from './layout/ModalLayout';
+
 import useInput from '../hooks/useInput';
 import { INPUT, PLACEHOLDER_TXT, SELECT_TEXT, RoomNames } from '../utils/constant';
-import { RoomType } from '../types';
+import { enterRoom } from '../utils/history';
 import { postRoom } from '../apis';
 
 type OptionType = {
@@ -20,11 +24,12 @@ export const roomOptions: OptionType[] = [
 
 type MakeRoomProps = {
   userId: number;
-  enterRoom: (uuid: string, roomInfo: RoomType) => void;
+  onClickBlackBackground: () => void;
 };
 
 const MakeRoom = (props: MakeRoomProps): JSX.Element => {
-  const { userId, enterRoom } = props;
+  const { userId, onClickBlackBackground } = props;
+  const navigate = useNavigate();
   const [roomTitle, onChangeRoomTitle] = useInput('');
   const [description, onChangeDescription] = useInput('');
   const [roomType, setRoomType] = useState('');
@@ -49,36 +54,38 @@ const MakeRoom = (props: MakeRoomProps): JSX.Element => {
 
     const { isOk, data } = await postRoom(requestBody);
     if (isOk && data) {
-      enterRoom(data.uuid, data);
+      enterRoom(data.uuid, data, navigate);
     }
   };
 
   return (
-    <div className="w(100%) bg(white) p(10) r(10)">
-      <h4 className="font(24) bold text-center">방 만들기</h4>
-      <form className="hbox" onSubmit={onSubmitForm}>
-        <div className="w(80%) p(10) vbox gap(10)">
-          <input
-            type="text"
-            placeholder={PLACEHOLDER_TXT.roomTitle}
-            onChange={onChangeRoomTitle}
-            maxLength={INPUT.roomTitleMaxLen}
-            autoComplete="new-password"
-          />
-          <input
-            type="text"
-            placeholder={PLACEHOLDER_TXT.roomDiscrpt}
-            onChange={onChangeDescription}
-            maxLength={INPUT.roomDescMaxLen}
-            autoComplete="new-password"
-          />
-          <Select name={SELECT_TEXT.roomType} options={roomOptions} onChange={onChangeRoomType} />
-          <Select name={SELECT_TEXT.headCount} options={adminOptions} onChange={onChangeAdminNumber} />
-        </div>
-        <div className="space(30)"></div>
-        <RectButton buttonName="생성" w="15%" h="150" />
-      </form>
-    </div>
+    <ModalLayout onClickBlackBackground={onClickBlackBackground}>
+      <div className="w(100%) bg(white) p(10) r(10)">
+        <h4 className="font(24) bold text-center">방 만들기</h4>
+        <form className="hbox" onSubmit={onSubmitForm}>
+          <div className="w(80%) p(10) vbox gap(10)">
+            <input
+              type="text"
+              placeholder={PLACEHOLDER_TXT.roomTitle}
+              onChange={onChangeRoomTitle}
+              maxLength={INPUT.roomTitleMaxLen}
+              autoComplete="new-password"
+            />
+            <input
+              type="text"
+              placeholder={PLACEHOLDER_TXT.roomDiscrpt}
+              onChange={onChangeDescription}
+              maxLength={INPUT.roomDescMaxLen}
+              autoComplete="new-password"
+            />
+            <Select name={SELECT_TEXT.roomType} options={roomOptions} onChange={onChangeRoomType} />
+            <Select name={SELECT_TEXT.headCount} options={adminOptions} onChange={onChangeAdminNumber} />
+          </div>
+          <div className="space(30)"></div>
+          <RectButton buttonName="생성" w="15%" h="150" />
+        </form>
+      </div>
+    </ModalLayout>
   );
 };
 
