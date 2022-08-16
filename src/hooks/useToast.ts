@@ -3,7 +3,10 @@ import { ToastMessageType, ToastType } from '../types';
 import { TOAST_TIME } from '../utils/constant';
 import { toastState } from './recoil/toast/atom';
 
-type ReturnType = (type: ToastMessageType, message: string) => void;
+type ReturnType = {
+  successToast: (message: string) => void;
+  errorToast: (message: string) => void;
+};
 
 function addToast(toastMessage: ToastType) {
   return (prev: ToastType[]) => [...prev, toastMessage];
@@ -27,5 +30,13 @@ export function useToast(delay = TOAST_TIME): ReturnType {
     }, delay);
   }
 
-  return toast;
+  function successToast(message: string) {
+    toast('success', message);
+  }
+
+  function errorToast(message: string) {
+    toast('error', message);
+  }
+
+  return { successToast, errorToast };
 }

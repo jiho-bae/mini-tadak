@@ -10,6 +10,8 @@ import useInput from '../hooks/useInput';
 import { postLogin } from '../apis';
 import { auth } from '../apis/auth';
 import { userState } from '../hooks/recoil/user/atom';
+import { useToast } from '../hooks/useToast';
+import { TOAST_MESSAGE } from '../utils/constant';
 
 const linkOption = {
   to: '/join',
@@ -23,15 +25,18 @@ export default function Login() {
   const setUser = useSetRecoilState(userState);
   const [userId, onChangeUserId] = useInput(passedUserId ?? '');
   const [password, onChangePassword] = useInput('');
+  const { successToast, errorToast } = useToast();
 
   const goToMain = () => navigate('/main');
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isEmpty(userId)) {
+      errorToast(TOAST_MESSAGE.invalidFormatUserId);
       return;
     }
     if (isEmpty(password)) {
+      errorToast(TOAST_MESSAGE.invalidFormatPwd);
       return;
     }
 
@@ -40,8 +45,11 @@ export default function Login() {
     if (isOk && data) {
       auth.setAccessToken(data.token);
       setUser(data.userInfo);
+      successToast(TOAST_MESSAGE.loginSuccess);
       goToMain();
+      return;
     }
+    errorToast(TOAST_MESSAGE.loginConfirm);
   };
 
   return (
