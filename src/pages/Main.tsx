@@ -17,6 +17,7 @@ import afterFetcher from 'src/apis/afterFetcher';
 import { TAB_NAME } from 'src/utils/constant';
 import { getRoomQueryObj } from 'src/apis/apiUtils';
 import useInput from 'src/hooks/useInput';
+import SearchBar from 'src/components/SearchBar';
 
 const tabWrapperStyle = 'pack mt(1.8rem) w(100%) relative mb(1.8rem)';
 
@@ -25,7 +26,7 @@ export default function Main() {
   const [loading, setLoading] = useState(true);
   const [rooms, setRooms] = useState<RoomType[]>([]);
   const [tabState, setTabState] = useState({ minitadak: true, campfire: false });
-  const [searchStr, onChangeSearchStr] = useInput('');
+  const [searchStr, onChangeSearch, onResetSearch] = useInput('');
   const [user, setUser] = useRecoilState(userState);
   const currentPage = useRef(1);
   const { errorToast } = useToast();
@@ -118,8 +119,10 @@ export default function Main() {
       <div className={tabWrapperStyle}>
         <Tab text={TAB_NAME.minitadak} isActive={tabState.minitadak} onClick={onClickMiniTadakTab} />
         <Tab text={TAB_NAME.campfire} isActive={tabState.campfire} onClick={onClickCampfireTab} />
+        <div className="w(10)" />
+        <SearchBar search={searchStr} onChange={onChangeSearch} onReset={onResetSearch} />
       </div>
-      <section className="hbox gap(10) flex-wrap @w(~450):vpack" onClick={onClickRoomCard}>
+      <section className="h(70vh) scroll no-scrollbar hbox gap(10) flex-wrap @w(~450):vpack" onClick={onClickRoomCard}>
         {rooms.map((room, idx) => (
           <RoomCard key={room.id} cardIdx={idx} {...room} />
         ))}
