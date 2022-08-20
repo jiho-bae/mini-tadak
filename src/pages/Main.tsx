@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
@@ -11,10 +11,12 @@ import { useToast } from 'src/hooks/useToast';
 import { enterRoom, redirectPage } from 'src/utils/history';
 import { ErrorResponse, RoomType } from 'src/types';
 import { auth } from 'src/apis/auth';
-import { getRoomByUuid, postLogout } from 'src/apis';
+import { getRoom, getRoomByUuid, postLogout, ResponseGetRoomData } from 'src/apis';
 import { TOAST_MESSAGE } from 'src/utils/constant';
 import afterFetcher from 'src/apis/afterFetcher';
 import { TAB_NAME } from 'src/utils/constant';
+import { getRoomQueryObj } from 'src/apis/apiUtils';
+import useInput from 'src/hooks/useInput';
 
 const tabWrapperStyle = 'pack mt(1.8rem) w(100%) relative mb(1.8rem)';
 
@@ -23,7 +25,9 @@ export default function Main() {
   const [loading, setLoading] = useState(true);
   const [rooms, setRooms] = useState<RoomType[]>([]);
   const [tabState, setTabState] = useState({ minitadak: true, campfire: false });
+  const [searchStr, onChangeSearchStr] = useInput('');
   const [user, setUser] = useRecoilState(userState);
+  const currentPage = useRef(1);
   const { errorToast } = useToast();
 
   const onClickMiniTadakTab = () => setTabState({ minitadak: true, campfire: false });
@@ -38,14 +42,32 @@ export default function Main() {
     redirectLoginPage();
   }, [redirectLoginPage, setUser]);
 
-  const fetchRoomList = useCallback(async () => {
-    const res = await fetch('/api/room?type=타닥타닥&search=&page=1&take=15');
-    const resData = await res.json();
-    const { results } = resData.data;
+  const getRoomList = useCallback(
+    async (search: string) => {
+      setLoading(true);
 
-    setRooms([...results]);
-    setLoading(false);
-  }, []);
+      const roomType = tabState.minitadak ? '타닥타닥' : '캠프파이어';
+      const { current: page } = currentPage;
+      const queryObj = getRoomQueryObj({ type: roomType, search, page });
+      const fetchResult = await getRoom(queryObj);
+
+      await afterFetcher({
+        fetchResult,
+        onSuccess: (data: ResponseGetRoomData) => {
+          if (page === 1) setRooms([...data.results]);
+          else setRooms((preRooms) => [...preRooms, ...data.results]);
+          currentPage.current += 1;
+
+          setLoading(false);
+        },
+        onError: (errorData: ErrorResponse) => {
+          errorToast(errorData.message ?? TOAST_MESSAGE.fetchError);
+          setLoading(false);
+        },
+      });
+    },
+    [tabState, errorToast],
+  );
 
   const canIEnterRoom = useCallback((roomData: RoomType) => {
     const { nowHeadcount, maxHeadcount } = roomData;
@@ -86,11 +108,9 @@ export default function Main() {
 
   useEffect(() => {
     if (user.nickname) {
-      fetchRoomList();
+      getRoomList('');
     }
-  }, [fetchRoomList, user]);
-
-  if (loading) return <div>loading...</div>;
+  }, [user, getRoomList]);
 
   return (
     <main className="vbox w(80%)">
@@ -103,6 +123,11 @@ export default function Main() {
         {rooms.map((room, idx) => (
           <RoomCard key={room.id} cardIdx={idx} {...room} />
         ))}
+        {!loading && (
+          <div className="w(100%) pack mt(10)">
+            <div>loading......</div>
+          </div>
+        )}
       </section>
     </main>
   );
