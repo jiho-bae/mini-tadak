@@ -55,6 +55,11 @@ export const PAGE_NAME = {
   campfire: 'CAMPFIRE',
 };
 
+export const TAB_NAME = {
+  minitadak: '미니타닥',
+  campfire: '캠프파이어',
+};
+
 export const ROOM_DESCRIPTION = {
   tadak: '개발 공부를 하는 예비 개발자들이 함께 학습하는 공간이에요.',
   campfire: '모닥불 주변에 모여서 대화를 나누는 아늑한 공간이에요.',
