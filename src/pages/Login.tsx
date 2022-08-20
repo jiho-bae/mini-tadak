@@ -44,9 +44,9 @@ export default function Login() {
 
     const baseOption = userBaseLoginOptions(userId, password);
 
+    const fetchResult = await postLogin(baseOption);
     await afterFetcher({
-      fetchFn: postLogin,
-      fetchFnArgs: [baseOption],
+      fetchResult,
       onSuccess: (data: PostLoginResponse) => {
         auth.setAccessToken(data.token);
         setUser(data.userInfo);

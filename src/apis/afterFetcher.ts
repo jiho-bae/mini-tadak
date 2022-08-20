@@ -1,13 +1,13 @@
+import { HTTPResponse } from 'src/types';
+
 type AfterFetcherArgs<T> = {
-  fetchFn: Function;
-  fetchFnArgs?: Array<T>;
+  fetchResult: HTTPResponse<T>;
   onSuccess: Function;
   onError: Function;
 };
 
-export default async function afterFetcher({ fetchFn, fetchFnArgs, onSuccess, onError }: AfterFetcherArgs<any>) {
-  const args = fetchFnArgs ?? [];
-  const { isOk, errorData, data } = await fetchFn(...args);
+export default async function afterFetcher({ fetchResult, onSuccess, onError }: AfterFetcherArgs<any>) {
+  const { isOk, errorData, data } = fetchResult;
 
   if (isOk) {
     onSuccess(data);

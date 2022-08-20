@@ -56,9 +56,9 @@ const MakeRoom = (props: MakeRoomProps): JSX.Element => {
       roomType,
     };
 
+    const fetchResult = await postRoom(requestBody);
     await afterFetcher({
-      fetchFn: postRoom,
-      fetchFnArgs: [requestBody],
+      fetchResult,
       onSuccess: (data: RoomType) => {
         enterRoom({ uuid: data.uuid, roomInfo: data, navigate });
       },

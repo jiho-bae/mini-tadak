@@ -37,10 +37,10 @@ export default function Join() {
     }
 
     const baseOption = userBaseJoinOptions(userId, password);
+    const fetchResult = await postJoin(baseOption);
 
     await afterFetcher({
-      fetchFn: postJoin,
-      fetchFnArgs: [baseOption],
+      fetchResult,
       onSuccess: () => {
         redirectLoginPage(userId);
         toast.successToast(TOAST_MESSAGE.joinSuccess);
