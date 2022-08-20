@@ -7,6 +7,10 @@ import useInput from 'src/hooks/useInput';
 import { userBaseJoinOptions } from 'src/apis/options';
 import { postJoin } from 'src/apis';
 import { isEmpty } from 'src/utils/utils';
+import { useToast } from 'src/hooks/useToast';
+import afterFetcher from 'src/apis/afterFetcher';
+import { TOAST_MESSAGE } from 'src/utils/constant';
+import { ErrorResponse } from 'src/types';
 
 const linkOption = {
   to: '/',
@@ -15,6 +19,7 @@ const linkOption = {
 
 export default function Join() {
   const navigate = useNavigate();
+  const toast = useToast();
   const [userId, onChangeUserId] = useInput('');
   const [password, onChangePassword] = useInput('');
 
@@ -32,10 +37,18 @@ export default function Join() {
     }
 
     const baseOption = userBaseJoinOptions(userId, password);
-    const { isOk } = await postJoin(baseOption);
 
-    if (isOk) redirectLoginPage(userId);
-    else alert('회원가입 오류');
+    await afterFetcher({
+      fetchFn: postJoin,
+      fetchFnArgs: [baseOption],
+      onSuccess: () => {
+        redirectLoginPage(userId);
+        toast.successToast(TOAST_MESSAGE.joinSuccess);
+      },
+      onError: (errorData: ErrorResponse) => {
+        toast.errorToast(errorData.message);
+      },
+    });
   };
 
   return (

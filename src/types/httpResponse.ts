@@ -1,8 +1,10 @@
-export default interface HTTPResponse<T> {
+export interface ErrorResponse {
+  message: string;
+  statusCode?: number;
+}
+
+export interface HTTPResponse<T> {
   isOk: boolean;
-  errorData?: {
-    message: string;
-    statusCode?: number;
-  };
+  errorData?: ErrorResponse;
   data?: T;
 }

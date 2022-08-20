@@ -7,11 +7,13 @@ import RectButton from 'src/components/common/RectButton';
 import { userBaseLoginOptions } from 'src/apis/options';
 import { isEmpty } from 'src/utils/utils';
 import useInput from 'src/hooks/useInput';
-import { postLogin } from 'src/apis';
+import { postLogin, PostLoginResponse } from 'src/apis';
+import afterFetcher from 'src/apis/afterFetcher';
 import { auth } from 'src/apis/auth';
 import { userState } from 'src/hooks/recoil/user/atom';
 import { useToast } from 'src/hooks/useToast';
 import { TOAST_MESSAGE } from 'src/utils/constant';
+import { ErrorResponse } from 'src/types';
 
 const linkOption = {
   to: '/join',
@@ -41,15 +43,20 @@ export default function Login() {
     }
 
     const baseOption = userBaseLoginOptions(userId, password);
-    const { isOk, data } = await postLogin(baseOption);
-    if (isOk && data) {
-      auth.setAccessToken(data.token);
-      setUser(data.userInfo);
-      successToast(TOAST_MESSAGE.loginSuccess);
-      goToMain();
-      return;
-    }
-    errorToast(TOAST_MESSAGE.loginConfirm);
+
+    await afterFetcher({
+      fetchFn: postLogin,
+      fetchFnArgs: [baseOption],
+      onSuccess: (data: PostLoginResponse) => {
+        auth.setAccessToken(data.token);
+        setUser(data.userInfo);
+        successToast(TOAST_MESSAGE.loginSuccess);
+        goToMain();
+      },
+      onError: (errorData: ErrorResponse) => {
+        errorToast(errorData.message ?? TOAST_MESSAGE.loginConfirm);
+      },
+    });
   };
 
   return (

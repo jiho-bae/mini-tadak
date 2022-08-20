@@ -8,7 +8,7 @@ interface PostLogin {
   password: string;
 }
 
-interface PostLoginResponse {
+export interface PostLoginResponse {
   userInfo: UserType;
   token: {
     accessToken: string;

@@ -9,6 +9,9 @@ import useInput from 'src/hooks/useInput';
 import { INPUT, PLACEHOLDER_TXT, SELECT_TEXT, RoomNames } from 'src/utils/constant';
 import { enterRoom } from 'src/utils/history';
 import { postRoom } from 'src/apis';
+import { useToast } from 'src/hooks/useToast';
+import afterFetcher from 'src/apis/afterFetcher';
+import { ErrorResponse, RoomType } from 'src/types';
 
 type OptionType = {
   value: number;
@@ -30,6 +33,7 @@ type MakeRoomProps = {
 const MakeRoom = (props: MakeRoomProps): JSX.Element => {
   const { userId, onClickBlackBackground } = props;
   const navigate = useNavigate();
+  const { errorToast } = useToast();
   const [roomTitle, onChangeRoomTitle] = useInput('');
   const [description, onChangeDescription] = useInput('');
   const [roomType, setRoomType] = useState('');
@@ -52,10 +56,16 @@ const MakeRoom = (props: MakeRoomProps): JSX.Element => {
       roomType,
     };
 
-    const { isOk, data } = await postRoom(requestBody);
-    if (isOk && data) {
-      enterRoom(data.uuid, data, navigate);
-    }
+    await afterFetcher({
+      fetchFn: postRoom,
+      fetchFnArgs: [requestBody],
+      onSuccess: (data: RoomType) => {
+        enterRoom({ uuid: data.uuid, roomInfo: data, navigate });
+      },
+      onError: (errorData: ErrorResponse) => {
+        errorToast(errorData.message);
+      },
+    });
   };
 
   return (
