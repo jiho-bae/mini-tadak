@@ -118,6 +118,10 @@ export default function Main() {
   }, [navigate, redirectLoginPage]);
 
   useEffect(() => {
+    currentPage.current = 1;
+  }, [tabState]);
+
+  useEffect(() => {
     if (user.nickname) {
       getRoomList('');
     }
@@ -146,10 +150,6 @@ export default function Main() {
 
     return () => roomObserver.disconnect();
   }, [addNewPage, rooms]);
-
-  useEffect(() => {
-    currentPage.current = 1;
-  }, [tabState]);
 
   return (
     <main className="vbox w(80%)">
