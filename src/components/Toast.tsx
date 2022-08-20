@@ -1,9 +1,9 @@
 import { useRecoilValue } from 'recoil';
 import { IoMdClose } from 'react-icons/io';
 
-import ToastPortal from './ToastPortal';
-import { toastState } from '../hooks/recoil/toast/atom';
-import { TOAST } from '../utils/styleConstant';
+import { ToastPortal } from './portal';
+import { toastState } from 'src/hooks/recoil/toast/atom';
+import { TOAST } from 'src/utils/styleConstant';
 
 const toastContainerStyle = `absolute pack bg(transparent) w(${TOAST.width}) left(40vw) top(${TOAST.topPosition}) z(100) r(10)`;
 const toastMessageStyle = `relative pack w(${TOAST.width}) p(5rem) r(10) c(white) font(1.8rem)`;

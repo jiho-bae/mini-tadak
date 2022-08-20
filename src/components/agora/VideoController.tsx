@@ -4,8 +4,8 @@ import { MdOutlineExitToApp, MdScreenShare, MdStopScreenShare } from 'react-icon
 import { ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-react';
 import { useNavigate } from 'react-router-dom';
 
-import useToggle from '../../hooks/useToggle';
-import { getClient } from '../../agora/config';
+import useToggle from 'src/hooks/useToggle';
+import { getClient } from 'src/agora/config';
 import CircleButton from '../common/CircleButton';
 import ScreenShare from './ScreenShare';
 

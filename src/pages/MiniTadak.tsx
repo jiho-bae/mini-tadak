@@ -1,15 +1,15 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { userState } from '../hooks/recoil/user/atom';
-import { getMicrophoneAndCameraTracks } from '../agora/config';
-import useAgora from '../hooks/useAgora';
 
-import AgoraVideoCardList from '../components/agora/VideoCardList';
-import VideoController from '../components/agora/VideoController';
-import Loader from '../components/Loader';
+import AgoraVideoCardList from 'src/components/agora/VideoCardList';
+import VideoController from 'src/components/agora/VideoController';
+import Loader from 'src/components/Loader';
 
-import { PAGE_NAME } from '../utils/constant';
-import { RoomType } from '../types';
+import { userState } from 'src/hooks/recoil/user/atom';
+import { getMicrophoneAndCameraTracks } from 'src/agora/config';
+import useAgora from 'src/hooks/useAgora';
+import { PAGE_NAME } from 'src/utils/constant';
+import { RoomType } from 'src/types';
 
 type LocationStateType = {
   state: RoomType;

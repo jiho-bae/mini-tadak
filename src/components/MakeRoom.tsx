@@ -5,10 +5,10 @@ import RectButton from './common/RectButton';
 import Select from './common/Select';
 import ModalLayout from './layout/ModalLayout';
 
-import useInput from '../hooks/useInput';
-import { INPUT, PLACEHOLDER_TXT, SELECT_TEXT, RoomNames } from '../utils/constant';
-import { enterRoom } from '../utils/history';
-import { postRoom } from '../apis';
+import useInput from 'src/hooks/useInput';
+import { INPUT, PLACEHOLDER_TXT, SELECT_TEXT, RoomNames } from 'src/utils/constant';
+import { enterRoom } from 'src/utils/history';
+import { postRoom } from 'src/apis';
 
 type OptionType = {
   value: number;

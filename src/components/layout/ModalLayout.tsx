@@ -1,6 +1,6 @@
 import React from 'react';
-import { MODAL } from '../../utils/styleConstant';
-import ModalPortal from '../ModalPortal';
+import { MODAL } from 'src/utils/styleConstant';
+import { ModalPortal } from 'src/components/portal';
 
 interface ModalProps {
   title?: string;

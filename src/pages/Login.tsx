@@ -1,17 +1,17 @@
 import { useNavigate, useLocation } from 'react-router';
 import { useSetRecoilState } from 'recoil';
 
-import AuthFormLayout from '../components/layout/AuthFormLayout';
-import RectButton from '../components/common/RectButton';
+import AuthFormLayout from 'src/components/layout/AuthFormLayout';
+import RectButton from 'src/components/common/RectButton';
 
-import { userBaseLoginOptions } from '../apis/options';
-import { isEmpty } from '../utils/utils';
-import useInput from '../hooks/useInput';
-import { postLogin } from '../apis';
-import { auth } from '../apis/auth';
-import { userState } from '../hooks/recoil/user/atom';
-import { useToast } from '../hooks/useToast';
-import { TOAST_MESSAGE } from '../utils/constant';
+import { userBaseLoginOptions } from 'src/apis/options';
+import { isEmpty } from 'src/utils/utils';
+import useInput from 'src/hooks/useInput';
+import { postLogin } from 'src/apis';
+import { auth } from 'src/apis/auth';
+import { userState } from 'src/hooks/recoil/user/atom';
+import { useToast } from 'src/hooks/useToast';
+import { TOAST_MESSAGE } from 'src/utils/constant';
 
 const linkOption = {
   to: '/join',
