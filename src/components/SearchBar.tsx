@@ -11,7 +11,7 @@ function SearchBar({ search, onChange, onReset }: SearchBarProps): JSX.Element {
   const onSubmitForm = (e: React.FormEvent<HTMLFormElement>) => e.preventDefault();
 
   return (
-    <form className="pack relative" onSubmit={onSubmitForm}>
+    <form className="ml(30) pack relative" onSubmit={onSubmitForm}>
       <input
         type="text"
         onChange={onChange}

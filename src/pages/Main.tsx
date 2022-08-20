@@ -21,7 +21,7 @@ import { getRoomQueryObj } from 'src/apis/apiUtils';
 import useInput from 'src/hooks/useInput';
 import useDebounce from 'src/hooks/useDebounce';
 
-const tabWrapperStyle = 'pack mt(1.8rem) w(100%) relative mb(1.8rem)';
+const tabWrapperStyle = 'pack mt(1.8rem) w(100%) relative mb(1.8rem) gap(10) @w(~460):vbox';
 
 let roomObserver: IntersectionObserver;
 
@@ -106,6 +106,7 @@ export default function Main() {
   );
 
   const addNewPage = useCallback(() => {
+    console.log('??');
     currentPage.current += 1;
     getRoomList(debounceSearch);
   }, [getRoomList, debounceSearch]);
@@ -119,13 +120,8 @@ export default function Main() {
 
   useEffect(() => {
     currentPage.current = 1;
-  }, [tabState]);
-
-  useEffect(() => {
-    if (user.nickname) {
-      getRoomList('');
-    }
-  }, [user, getRoomList]);
+    getRoomList(debounceSearch);
+  }, [getRoomList, tabState, debounceSearch]);
 
   useEffect(() => {
     if (endRef.current?.lastElementChild) {
@@ -135,7 +131,6 @@ export default function Main() {
         function (entries, observer) {
           entries.forEach(function (entry) {
             if (entry.isIntersecting && rooms.length === currentPage.current * INFINITE_SCROLL.unit) {
-              console.log('good');
               observer.unobserve(entry.target);
               addNewPage();
             }
@@ -155,14 +150,15 @@ export default function Main() {
     <main className="vbox w(80%)">
       <Header onClickLogOut={onClickLogOut} userId={user.nickname} />
       <div className={tabWrapperStyle}>
-        <Tab text={TAB_NAME.minitadak} isActive={tabState.minitadak} onClick={onClickMiniTadakTab} />
-        <Tab text={TAB_NAME.campfire} isActive={tabState.campfire} onClick={onClickCampfireTab} />
-        <div className="w(10)" />
+        <div className="w(50%) pack @w(~450):w(100%) ">
+          <Tab text={TAB_NAME.minitadak} isActive={tabState.minitadak} onClick={onClickMiniTadakTab} />
+          <Tab text={TAB_NAME.campfire} isActive={tabState.campfire} onClick={onClickCampfireTab} />
+        </div>
         <SearchBar search={searchStr} onChange={onChangeSearch} onReset={onResetSearch} />
       </div>
       <section
         ref={endRef}
-        className="h(70vh) scroll no-scrollbar hbox gap(30) flex-wrap @w(~450):vpack"
+        className="h(70vh) scroll no-scrollbar hbox(top) gap(30) flex-wrap @w(~450):vpack/h(50vh)"
         onClick={onClickRoomCard}>
         {rooms.length ? (
           rooms.map((room, idx) => <RoomCard key={room.id} cardIdx={idx} {...room} />)
