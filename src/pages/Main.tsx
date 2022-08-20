@@ -2,24 +2,26 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
-import Header from '../components/Header';
-import RoomCard from '../components/RoomCard';
+import Header from 'src/components/Header';
+import RoomCard from 'src/components/RoomCard';
 
-import { userState } from '../hooks/recoil/atom';
-import { enterRoom } from '../utils/history';
-import { RoomType } from '../types';
-import { auth } from '../apis/auth';
-import { postLogout } from '../apis';
+import { userState } from 'src/hooks/recoil/user/atom';
+import { useToast } from 'src/hooks/useToast';
+import { enterRoom, redirectPage } from 'src/utils/history';
+import { ErrorResponse, RoomType } from 'src/types';
+import { auth } from 'src/apis/auth';
+import { getRoomByUuid, postLogout } from 'src/apis';
+import { TOAST_MESSAGE } from 'src/utils/constant';
+import afterFetcher from 'src/apis/afterFetcher';
 
 export default function Main() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [rooms, setRooms] = useState<RoomType[]>([]);
   const [user, setUser] = useRecoilState(userState);
+  const { errorToast } = useToast();
 
-  const redirectLoginPage = useCallback(() => {
-    navigate('/', { replace: true });
-  }, [navigate]);
+  const redirectLoginPage = redirectPage({ navigate, path: '/', replace: true });
 
   const onClickLogOut = useCallback(() => {
     postLogout();
@@ -37,13 +39,6 @@ export default function Main() {
     setLoading(false);
   }, []);
 
-  const fetchClickedRoomInfoByUuid = useCallback(async (uuid: string) => {
-    const res = await fetch(`/api/room/${uuid}`);
-    const resData = await res.json();
-    const { data } = resData;
-    return data;
-  }, []);
-
   const canIEnterRoom = useCallback((roomData: RoomType) => {
     const { nowHeadcount, maxHeadcount } = roomData;
     return nowHeadcount <= maxHeadcount;
@@ -54,14 +49,24 @@ export default function Main() {
       const roomCard = e.target.closest('.room-card');
       const { cardIdx } = roomCard.dataset;
       const { uuid } = rooms[cardIdx];
-      const clickedRoomInfo = await fetchClickedRoomInfoByUuid(uuid);
-      if (!canIEnterRoom(clickedRoomInfo)) {
-        return;
-      }
+      const fetchResult = await getRoomByUuid(uuid);
 
-      enterRoom(uuid, clickedRoomInfo, navigate);
+      await afterFetcher({
+        fetchResult,
+        onSuccess: (data: RoomType) => {
+          if (!canIEnterRoom(data)) {
+            errorToast(TOAST_MESSAGE.exceedEntryCapacity);
+            return;
+          }
+
+          enterRoom({ uuid, roomInfo: data, navigate });
+        },
+        onError: (errorData: ErrorResponse) => {
+          errorToast(errorData.message);
+        },
+      });
     },
-    [rooms, fetchClickedRoomInfoByUuid, canIEnterRoom, navigate],
+    [rooms, canIEnterRoom, errorToast, navigate],
   );
 
   useEffect(() => {
@@ -80,12 +85,9 @@ export default function Main() {
   if (loading) return <div>loading...</div>;
 
   return (
-    <main className="vbox">
+    <main className="vbox w(80%)">
       <Header onClickLogOut={onClickLogOut} userId={user.nickname} />
-      <div className="space(30)"></div>
-      <hr className="b(1/solid/white)" />
-      <div className="space(30)"></div>
-      <section className="pack gap(10)" onClick={onClickRoomCard}>
+      <section className="hbox gap(10) flex-wrap @w(~450):vpack" onClick={onClickRoomCard}>
         {rooms.map((room, idx) => (
           <RoomCard key={room.id} cardIdx={idx} {...room} />
         ))}

@@ -7,9 +7,9 @@ import {
   AgoraVideoPlayer,
 } from 'agora-rtc-react';
 
-import { SCREEN_SHARE_HEIGHT, SPEAK } from '../../utils/constant';
-import { FullScreenDivType, openFullScreen } from '../../utils/utils';
-import { VIDEO_BOX } from '../../utils/styleConstant';
+import { SCREEN_SHARE_HEIGHT, SPEAK } from 'src/utils/constant';
+import { FullScreenDivType, openFullScreen } from 'src/utils/utils';
+import { VIDEO_BOX } from 'src/utils/styleConstant';
 
 const videoCardWrapperStyle = 'vbox';
 const videoCardStyle = `pack relative w(${VIDEO_BOX.width}) h(${VIDEO_BOX.height}) r(10) clip`;

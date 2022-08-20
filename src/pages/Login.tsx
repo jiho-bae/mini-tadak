@@ -1,15 +1,19 @@
 import { useNavigate, useLocation } from 'react-router';
 import { useSetRecoilState } from 'recoil';
 
-import AuthFormLayout from '../components/layout/AuthFormLayout';
-import RectButton from '../components/common/RectButton';
+import AuthFormLayout from 'src/components/layout/AuthFormLayout';
+import RectButton from 'src/components/common/RectButton';
 
-import { userBaseLoginOptions } from '../apis/options';
-import { isEmpty } from '../utils/utils';
-import useInput from '../hooks/useInput';
-import { postLogin } from '../apis';
-import { auth } from '../apis/auth';
-import { userState } from '../hooks/recoil/atom';
+import { userBaseLoginOptions } from 'src/apis/options';
+import { isEmpty } from 'src/utils/utils';
+import useInput from 'src/hooks/useInput';
+import { postLogin, PostLoginResponse } from 'src/apis';
+import afterFetcher from 'src/apis/afterFetcher';
+import { auth } from 'src/apis/auth';
+import { userState } from 'src/hooks/recoil/user/atom';
+import { useToast } from 'src/hooks/useToast';
+import { TOAST_MESSAGE } from 'src/utils/constant';
+import { ErrorResponse } from 'src/types';
 
 const linkOption = {
   to: '/join',
@@ -23,25 +27,36 @@ export default function Login() {
   const setUser = useSetRecoilState(userState);
   const [userId, onChangeUserId] = useInput(passedUserId ?? '');
   const [password, onChangePassword] = useInput('');
+  const { successToast, errorToast } = useToast();
 
   const goToMain = () => navigate('/main');
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isEmpty(userId)) {
+      errorToast(TOAST_MESSAGE.invalidFormatUserId);
       return;
     }
     if (isEmpty(password)) {
+      errorToast(TOAST_MESSAGE.invalidFormatPwd);
       return;
     }
 
     const baseOption = userBaseLoginOptions(userId, password);
-    const { isOk, data } = await postLogin(baseOption);
-    if (isOk && data) {
-      auth.setAccessToken(data.token);
-      setUser(data.userInfo);
-      goToMain();
-    }
+
+    const fetchResult = await postLogin(baseOption);
+    await afterFetcher({
+      fetchResult,
+      onSuccess: (data: PostLoginResponse) => {
+        auth.setAccessToken(data.token);
+        setUser(data.userInfo);
+        successToast(TOAST_MESSAGE.loginSuccess);
+        goToMain();
+      },
+      onError: (errorData: ErrorResponse) => {
+        errorToast(errorData.message ?? TOAST_MESSAGE.loginConfirm);
+      },
+    });
   };
 
   return (

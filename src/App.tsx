@@ -2,13 +2,14 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-import MainLayout from './components/layout/MainLayout';
-import Router from './components/Router';
+import MainLayout from 'src/components/layout/MainLayout';
+import Router from 'src/components/Router';
 
-import { auth } from './apis/auth';
-import { LocalStorage } from './utils/localStorage';
-import { getUserByToken } from './apis';
-import { userState } from './hooks/recoil/atom';
+import { auth } from 'src/apis/auth';
+import { LocalStorage } from 'src/utils/localStorage';
+import { getUserByToken } from 'src/apis';
+import { userState } from 'src/hooks/recoil/user/atom';
+import Toast from 'src/components/Toast';
 
 function App() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ function App() {
       <MainLayout>
         <Router />
       </MainLayout>
+      <Toast />
     </div>
   );
 }
