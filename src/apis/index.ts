@@ -92,7 +92,7 @@ interface GetRoomQueryObj {
   page: number;
 }
 
-interface ResponseGetRoomData {
+export interface ResponseGetRoomData {
   pageTotal: number;
   results: RoomType[];
   total: number;

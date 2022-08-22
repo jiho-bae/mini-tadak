@@ -15,7 +15,7 @@ export default memo(function RoomCard({
 }: RoomCardProps) {
   return (
     <div
-      className="room-card w(250) h(150) vbox bg(white) r(15) p(15) cursor(pointer) hover:bg(#74b9ff) "
+      className="room-card w(250) h(150) vbox bg(#ecf0f1) r(15) p(15) cursor(pointer) hover:bg(#74b9ff) "
       data-card-idx={cardIdx}>
       <h4 className="bold font(18)">{title}</h4>
       <p>{description}</p>

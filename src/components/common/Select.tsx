@@ -8,21 +8,25 @@ type OptionProps = {
 type SelectProps = {
   name: string;
   options: OptionProps[];
+  selected: string | number;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
-const selectStyle = 'w(100%) h(28) pack border(1px/solid/grey) br(10) c(black) placeholder(black)';
+const selectStyle = 'w(85%) h(28) pack c(black) placeholder(black)';
 
-const Select = ({ name, options, onChange }: SelectProps): JSX.Element => {
+const Select = ({ name, options, selected, onChange }: SelectProps): JSX.Element => {
   return (
-    <select className={selectStyle} onChange={onChange} defaultValue="">
-      <option value="">{name} 선택</option>
-      {options.map(({ value, label }, idx) => (
-        <option key={idx} value={value} className="c(black)">
-          {label}
-        </option>
-      ))}
-    </select>
+    <div className="hbox space-between w(100%)">
+      <label htmlFor={name}>{name}</label>
+      <select id={name} className={selectStyle} onChange={onChange} defaultValue={selected}>
+        <option value="">{name} 선택</option>
+        {options.map(({ value, label }, idx) => (
+          <option key={idx} value={value} className="c(black)">
+            {label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };
 

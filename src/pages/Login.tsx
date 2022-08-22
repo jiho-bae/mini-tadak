@@ -12,11 +12,11 @@ import afterFetcher from 'src/apis/afterFetcher';
 import { auth } from 'src/apis/auth';
 import { userState } from 'src/hooks/recoil/user/atom';
 import { useToast } from 'src/hooks/useToast';
-import { TOAST_MESSAGE } from 'src/utils/constant';
+import { PATH, TOAST_MESSAGE } from 'src/utils/constant';
 import { ErrorResponse } from 'src/types';
 
 const linkOption = {
-  to: '/join',
+  to: PATH.join,
   text: '회원가입 하러가기',
 };
 
@@ -29,7 +29,7 @@ export default function Login() {
   const [password, onChangePassword] = useInput('');
   const { successToast, errorToast } = useToast();
 
-  const goToMain = () => navigate('/main');
+  const goToMain = () => navigate(PATH.main);
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -9,11 +9,12 @@ import { postJoin } from 'src/apis';
 import { isEmpty } from 'src/utils/utils';
 import { useToast } from 'src/hooks/useToast';
 import afterFetcher from 'src/apis/afterFetcher';
-import { TOAST_MESSAGE } from 'src/utils/constant';
+import { TOAST_MESSAGE, PATH } from 'src/utils/constant';
 import { ErrorResponse } from 'src/types';
+import { redirectPage } from 'src/utils/history';
 
 const linkOption = {
-  to: '/',
+  to: PATH.login,
   text: '로그인 하러가기',
 };
 
@@ -23,9 +24,7 @@ export default function Join() {
   const [userId, onChangeUserId] = useInput('');
   const [password, onChangePassword] = useInput('');
 
-  const redirectLoginPage = (userId: string) => {
-    navigate('/', { state: userId });
-  };
+  const redirectLoginPage = redirectPage({ navigate, path: PATH.login, replace: true, state: userId });
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,7 +41,7 @@ export default function Join() {
     await afterFetcher({
       fetchResult,
       onSuccess: () => {
-        redirectLoginPage(userId);
+        redirectLoginPage();
         toast.successToast(TOAST_MESSAGE.joinSuccess);
       },
       onError: (errorData: ErrorResponse) => {

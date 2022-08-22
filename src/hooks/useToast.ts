@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { ToastMessageType, ToastType } from '../types';
 import { TOAST_TIME } from '../utils/constant';
@@ -19,24 +20,33 @@ function delToast(toastId: string) {
 export function useToast(delay = TOAST_TIME): ReturnType {
   const setToastMessage = useSetRecoilState(toastState);
 
-  function toast(type: ToastMessageType, message: string) {
-    const id = Math.random().toString(36).substr(2, 9);
-    const toastMessage = { type, message, id };
+  const toast = useCallback(
+    function (type: ToastMessageType, message: string) {
+      const id = Math.random().toString(36).substr(2, 9);
+      const toastMessage = { type, message, id };
 
-    setToastMessage(addToast(toastMessage));
+      setToastMessage(addToast(toastMessage));
 
-    setTimeout(() => {
-      setToastMessage(delToast(id));
-    }, delay);
-  }
+      setTimeout(() => {
+        setToastMessage(delToast(id));
+      }, delay);
+    },
+    [delay, setToastMessage],
+  );
 
-  function successToast(message: string) {
-    toast('success', message);
-  }
+  const successToast = useCallback(
+    function (message: string) {
+      toast('success', message);
+    },
+    [toast],
+  );
 
-  function errorToast(message: string) {
-    toast('error', message);
-  }
+  const errorToast = useCallback(
+    function (message: string) {
+      toast('error', message);
+    },
+    [toast],
+  );
 
   return { successToast, errorToast };
 }

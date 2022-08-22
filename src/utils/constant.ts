@@ -42,9 +42,10 @@ export const MODAL_NAME = {
 };
 
 export const PATH = {
-  introduction: '/',
+  login: '/',
+  join: '/join',
   main: '/main',
-  tadak: '/room/tadak',
+  minitadak: '/room/minitadak/:uuid',
   campfire: '/room/campfire',
   profile: '/profile',
 };
@@ -53,6 +54,11 @@ export const PAGE_NAME = {
   main: 'MAIN',
   tadak: 'TADAK',
   campfire: 'CAMPFIRE',
+};
+
+export const TAB_NAME = {
+  minitadak: '미니타닥',
+  campfire: '캠프파이어',
 };
 
 export const ROOM_DESCRIPTION = {
@@ -75,6 +81,7 @@ export const TOAST_MESSAGE = {
   invalidFormatPwd: '비밀번호는 6자 이상 20자 이하 영문과 숫자를 반드시 포함해야 합니다.',
   invalidFormatNickname: '닉네임은 2자 이상 15자 이하 영문,숫자,한글만 입력할 수 있습니다.',
   invalidPassword: '비밀번호가 틀렸습니다.',
+  invalidToken: '유효하지 않은 접근입니다.',
   notAllowedNonLogin: '로그인 후 입장할 수 있습니다.',
   exceedEntryCapacity: '입장 가능한 인원을 초과했습니다.',
   loginConfirm: '이메일 및 비밀번호를 확인해주세요',
