@@ -42,9 +42,10 @@ export const MODAL_NAME = {
 };
 
 export const PATH = {
-  introduction: '/',
+  login: '/',
+  join: '/join',
   main: '/main',
-  tadak: '/room/tadak',
+  minitadak: '/room/minitadak/:uuid',
   campfire: '/room/campfire',
   profile: '/profile',
 };
