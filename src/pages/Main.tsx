@@ -20,7 +20,7 @@ import { TAB_NAME } from 'src/utils/constant';
 import { getRoomQueryObj } from 'src/apis/apiUtils';
 import useInput from 'src/hooks/useInput';
 import useDebounce from 'src/hooks/useDebounce';
-import { LocalStorage } from 'src/utils/localStorage';
+import { initSocket, isSocketDisconnected } from 'src/socket/socket';
 
 const tabWrapperStyle = 'pack mt(1.8rem) w(100%) relative mb(1.8rem) gap(10) @w(~460):vbox';
 
@@ -84,6 +84,8 @@ export default function Main() {
   const onClickRoomCard = useCallback(
     async (e: any) => {
       const roomCard = e.target.closest('.room-card');
+      if (!roomCard) return;
+
       const { cardIdx } = roomCard.dataset;
       const { uuid } = rooms[cardIdx];
       const fetchResult = await getRoomByUuid(uuid);
@@ -138,6 +140,10 @@ export default function Main() {
 
     return () => roomObserver.disconnect();
   }, [addNewPage, rooms]);
+
+  useEffect(() => {
+    if (isSocketDisconnected()) initSocket();
+  }, []);
 
   return (
     <main className="vbox w(80%)">
