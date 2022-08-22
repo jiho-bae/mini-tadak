@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import RectButton from './common/RectButton';
 import Select from './common/Select';
 import ModalLayout from './layout/ModalLayout';
+import Input from './common/Input';
 
 import useRecoilInput from 'src/hooks/useRecoilInput';
 import makeRoomState from 'src/hooks/recoil/modal/makeRoom/atom';
@@ -75,7 +76,8 @@ const MakeRoom = (props: MakeRoomProps): JSX.Element => {
         <h4 className="font(24) bold text-center">방 만들기</h4>
         <form className="hbox" onSubmit={onSubmitForm}>
           <div className="w(80%) p(10) vbox gap(10)">
-            <input
+            <Input
+              name="제목"
               type="text"
               placeholder={PLACEHOLDER_TXT.roomTitle}
               onChange={onChangeRoomTitle}
@@ -83,7 +85,8 @@ const MakeRoom = (props: MakeRoomProps): JSX.Element => {
               autoComplete="new-password"
               value={roomTitle}
             />
-            <input
+            <Input
+              name="설명"
               type="text"
               placeholder={PLACEHOLDER_TXT.roomDiscrpt}
               onChange={onChangeDescription}
