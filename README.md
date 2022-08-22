@@ -36,17 +36,36 @@
 - `아이디 / 비밀번호` 회원가입
 - 회원가입 요청시 기존 서버에서 요구하는 `email / nickname / password / devField` 형식에 맞게 변환 후 요청
 
+#### 🦀 메인 페이지
+
+<div style="display:flex">
+  <img style="margin-right:10px" width="400" alt="image" src="https://user-images.githubusercontent.com/67041709/185920660-1a9c3f38-2afc-4804-aff6-c4332254166d.png">
+  <img width="400" alt="image" src="https://user-images.githubusercontent.com/67041709/185921071-13b81221-b82a-4c53-8b7f-8b29ad9c98f8.png">
+</div>
+
+- 기본 방 목록 15개. 스크롤 위치 기반 새로운 방 목록 요청
+- 검색 기능 0.5초 디바운스 적용(키보드 입력 종료후 0.5초 후에 검색)
+- 방 목록 클릭시 방 입장 가능
+
+<div style="display:flex">
+    <img style="margin-right:10px" width="400" alt="image" src="https://user-images.githubusercontent.com/67041709/185922171-f8414822-a731-4d99-b42e-69fece53be58.png">
+    <img width="400" alt="image" src="https://user-images.githubusercontent.com/67041709/185922503-43074643-3a4f-4b0d-bcce-3a5fc9066fbc.png">
+</div>
+
+- 헤더 - 방만들기로 최대 1개의 방 개설 가능
+- 자동으로 개설한 방으로 이동. 영상/음성 통신 가능
+
 #### 🦀 페이지 추가 예정
 
 comming soon.......... 🙂🙂🙂🙂🙂🙂🙂
 
 ### ☠️ 프로젝트를 통해 맛 볼 기술
 
-- 기존 jwt 방식에 refresh token 추가 도입
+- ✅ 기존 jwt 방식에 refresh token 추가 도입
 - 함수형 프로그래밍 및 선언형 프로그래밍 맛보기
-- adorable css
-- event delegation
-- intersection observer
-- state management library
+- ✅ adorable css (functional css)
+- ✅ event delegation
+- ✅ intersection observer
+- ⏳ state management library
 - suspense + errorboundary
-- 이외에도 추가될 수 있습니다.
+- 이외에 추가될 수 있습니다.
