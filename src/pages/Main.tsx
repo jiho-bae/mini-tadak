@@ -20,7 +20,7 @@ import { TAB_NAME } from 'src/utils/constant';
 import { getRoomQueryObj } from 'src/apis/apiUtils';
 import useInput from 'src/hooks/useInput';
 import useDebounce from 'src/hooks/useDebounce';
-import { initSocket, isSocketDisconnected } from 'src/socket/socket';
+import socket from 'src/services/socket';
 
 const tabWrapperStyle = 'pack mt(1.8rem) w(100%) relative mb(1.8rem) gap(10) @w(~460):vbox';
 
@@ -142,7 +142,7 @@ export default function Main() {
   }, [addNewPage, rooms]);
 
   useEffect(() => {
-    if (isSocketDisconnected()) initSocket();
+    if (socket.isDisconnected()) socket.init();
   }, []);
 
   return (
