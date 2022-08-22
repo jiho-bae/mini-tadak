@@ -1,11 +1,12 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
 import RectButton from './common/RectButton';
 import Select from './common/Select';
 import ModalLayout from './layout/ModalLayout';
 
-import useInput from 'src/hooks/useInput';
+import useRecoilInput from 'src/hooks/useRecoilInput';
+import makeRoomState from 'src/hooks/recoil/modal/makeRoom/atom';
 import { INPUT, PLACEHOLDER_TXT, SELECT_TEXT, RoomNames } from 'src/utils/constant';
 import { enterRoom } from 'src/utils/history';
 import { postRoom } from 'src/apis';
@@ -21,8 +22,8 @@ type OptionType = {
 export const adminOptions = new Array(8).fill(0).map((_, i) => ({ value: i + 2, label: i + 2 }));
 
 export const roomOptions: OptionType[] = [
-  { value: 1, label: RoomNames.tadak },
-  { value: 2, label: RoomNames.campfire },
+  { value: 0, label: RoomNames.tadak },
+  { value: 1, label: RoomNames.campfire },
 ];
 
 type MakeRoomProps = {
@@ -34,26 +35,26 @@ const MakeRoom = (props: MakeRoomProps): JSX.Element => {
   const { userId, onClickBlackBackground } = props;
   const navigate = useNavigate();
   const { errorToast } = useToast();
-  const [roomTitle, onChangeRoomTitle] = useInput('');
-  const [description, onChangeDescription] = useInput('');
-  const [roomType, setRoomType] = useState('');
-  const [maxHeadcount, setMaxHeadcount] = useState('');
+  const [roomTitle, onChangeRoomTitle] = useRecoilInput(makeRoomState.roomTitle);
+  const [description, onChangeDescription] = useRecoilInput(makeRoomState.description);
+  const [roomTypeIdx, setRoomTypeIdx] = useRecoilState(makeRoomState.roomType);
+  const [maxHeadcount, setMaxHeadcount] = useRecoilState(makeRoomState.maxHeadCount);
 
   const onChangeRoomType = (e: React.ChangeEvent<HTMLSelectElement>): void =>
-    setRoomType((e.target[e.target.selectedIndex] as HTMLOptionElement).text);
+    setRoomTypeIdx((e.target[e.target.selectedIndex] as HTMLOptionElement).value);
   const onChangeAdminNumber = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setMaxHeadcount((e.target[e.target.selectedIndex] as HTMLOptionElement).value);
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!roomTitle || !description || !roomType || !maxHeadcount) return alert('칸을 다 채우세요.');
+    if (!roomTitle || !description || !roomTypeIdx || !maxHeadcount) return alert('칸을 다 채우세요.');
 
     const requestBody = {
       userId,
       title: roomTitle,
       description,
       maxHeadcount: Number(maxHeadcount),
-      roomType,
+      roomType: roomOptions[Number(roomTypeIdx)].label,
     };
 
     const fetchResult = await postRoom(requestBody);
@@ -80,6 +81,7 @@ const MakeRoom = (props: MakeRoomProps): JSX.Element => {
               onChange={onChangeRoomTitle}
               maxLength={INPUT.roomTitleMaxLen}
               autoComplete="new-password"
+              value={roomTitle}
             />
             <input
               type="text"
@@ -87,9 +89,20 @@ const MakeRoom = (props: MakeRoomProps): JSX.Element => {
               onChange={onChangeDescription}
               maxLength={INPUT.roomDescMaxLen}
               autoComplete="new-password"
+              value={description}
             />
-            <Select name={SELECT_TEXT.roomType} options={roomOptions} onChange={onChangeRoomType} />
-            <Select name={SELECT_TEXT.headCount} options={adminOptions} onChange={onChangeAdminNumber} />
+            <Select
+              name={SELECT_TEXT.roomType}
+              selected={roomTypeIdx}
+              options={roomOptions}
+              onChange={onChangeRoomType}
+            />
+            <Select
+              name={SELECT_TEXT.headCount}
+              selected={maxHeadcount}
+              options={adminOptions}
+              onChange={onChangeAdminNumber}
+            />
           </div>
           <div className="space(30)"></div>
           <RectButton buttonName="생성" w="15%" h="150" />
