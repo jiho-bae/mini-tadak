@@ -20,6 +20,7 @@ import { TAB_NAME } from 'src/utils/constant';
 import { getRoomQueryObj } from 'src/apis/apiUtils';
 import useInput from 'src/hooks/useInput';
 import useDebounce from 'src/hooks/useDebounce';
+import { LocalStorage } from 'src/utils/localStorage';
 
 const tabWrapperStyle = 'pack mt(1.8rem) w(100%) relative mb(1.8rem) gap(10) @w(~460):vbox';
 
@@ -106,17 +107,9 @@ export default function Main() {
   );
 
   const addNewPage = useCallback(() => {
-    console.log('??');
     currentPage.current += 1;
     getRoomList(debounceSearch);
   }, [getRoomList, debounceSearch]);
-
-  useEffect(() => {
-    if (!auth.hasAccessToken()) {
-      redirectLoginPage();
-      return;
-    }
-  }, [navigate, redirectLoginPage]);
 
   useEffect(() => {
     currentPage.current = 1;
