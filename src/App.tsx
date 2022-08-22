@@ -6,7 +6,7 @@ import MainLayout from 'src/components/layout/MainLayout';
 import Router from 'src/components/Router';
 import Toast from 'src/components/Toast';
 
-import { auth } from 'src/apis/auth';
+import { auth } from 'src/services/auth';
 import { LocalStorage } from 'src/utils/localStorage';
 import { getUserByToken, PostLoginResponse } from 'src/apis';
 import { userState } from 'src/hooks/recoil/user/atom';

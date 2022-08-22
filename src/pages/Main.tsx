@@ -12,7 +12,7 @@ import { userState } from 'src/hooks/recoil/user/atom';
 import { useToast } from 'src/hooks/useToast';
 import { enterRoom, redirectPage } from 'src/utils/history';
 import { ErrorResponse, RoomType } from 'src/types';
-import { auth } from 'src/apis/auth';
+import { auth } from 'src/services/auth';
 import { getRoom, getRoomByUuid, postLogout, ResponseGetRoomData } from 'src/apis';
 import { INFINITE_SCROLL, TOAST_MESSAGE } from 'src/utils/constant';
 import afterFetcher from 'src/apis/afterFetcher';
