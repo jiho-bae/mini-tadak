@@ -10,7 +10,7 @@ type EnterRoomArgs = {
 };
 
 export function enterRoom({ uuid, roomInfo, navigate }: EnterRoomArgs) {
-  navigate(`/room/${uuid}`, { state: roomInfo });
+  navigate(`/room/minitadak/${uuid}`, { state: roomInfo });
 }
 
 type RedirectPageArgs = {

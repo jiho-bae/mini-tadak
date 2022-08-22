@@ -151,7 +151,7 @@ export default function Main() {
       </div>
       <section
         ref={endRef}
-        className="h(70vh) scroll no-scrollbar hbox(top) gap(30) flex-wrap @w(~450):vpack/h(50vh)"
+        className="h(75vh) scroll no-scrollbar hbox(top) gap(30) flex-wrap @w(~450):vpack/h(50vh)"
         onClick={onClickRoomCard}>
         {rooms.length ? (
           rooms.map((room, idx) => <RoomCard key={room.id} cardIdx={idx} {...room} />)
