@@ -1,31 +1,43 @@
 import { useState, useCallback, useEffect } from 'react';
 import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash } from 'react-icons/fa';
-import { MdOutlineExitToApp, MdScreenShare, MdStopScreenShare } from 'react-icons/md';
+import { MdOutlineExitToApp, MdScreenShare, MdStopScreenShare, MdChat, MdChatBubble } from 'react-icons/md';
 import { ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-react';
 import { useNavigate } from 'react-router-dom';
+
+import ScreenShare from './ScreenShare';
 
 import useToggle from 'src/hooks/useToggle';
 import { getClient } from 'src/agora/config';
 import CircleButton from '../common/CircleButton';
-import ScreenShare from './ScreenShare';
 
-const buttonContainerStyle = 'w(100%) h(10%) relative';
+const buttonContainerStyle = `w(100%) h(10%) absolute bottom(1.5rem)`;
 const videoControlsStyle = 'pack';
-const getOutButtonStyle = 'fixed top(0) top(10) right(10)';
+const chatButtonStyle = 'pack';
 
 interface VideoControllerProps {
   tracks: [IMicrophoneAudioTrack, ICameraVideoTrack];
+  isSideBar: boolean;
   toggleIsStreaming: () => void;
+  toggleIsSideBar: () => void;
   uuid: string;
   ownerId: number | undefined;
 }
 
-const VideoController = ({ tracks, toggleIsStreaming, uuid, ownerId }: VideoControllerProps): JSX.Element => {
+const VideoController = ({
+  tracks,
+  isSideBar,
+  toggleIsStreaming,
+  toggleIsSideBar,
+  uuid,
+  ownerId,
+}: VideoControllerProps): JSX.Element => {
   const navigate = useNavigate();
   const client = getClient();
   const [trackState, setTrackState] = useState({ video: false, audio: false });
   const [isScreenShare, toggleIsScreenShare] = useToggle(false);
   const [myAudioTrack, myVideoTrack] = tracks;
+
+  const getOutButtonStyle = `fixed top(10) right(${isSideBar ? '26rem' : '1rem'})`;
 
   const mute = async (type: 'audio' | 'video') => {
     if (type === 'audio') {
@@ -74,6 +86,9 @@ const VideoController = ({ tracks, toggleIsStreaming, uuid, ownerId }: VideoCont
           icon={isScreenShare ? <MdScreenShare fill="white" /> : <MdStopScreenShare />}
           onClick={toggleIsScreenShare}
         />
+        <div className={chatButtonStyle}>
+          <CircleButton icon={isSideBar ? <MdChatBubble /> : <MdChat fill="white" />} onClick={toggleIsSideBar} />
+        </div>
         {isScreenShare && (
           <ScreenShare
             client={client}

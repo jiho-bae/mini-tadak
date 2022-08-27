@@ -10,6 +10,8 @@ import { getMicrophoneAndCameraTracks } from 'src/agora/config';
 import useAgora from 'src/hooks/useAgora';
 import { PAGE_NAME } from 'src/utils/constant';
 import { RoomType } from 'src/types';
+import MiniTadakSideBar from 'src/components/MiniTadakSideBar';
+import useToggle from 'src/hooks/useToggle';
 
 type LocationStateType = {
   state: RoomType;
@@ -23,6 +25,7 @@ export default function MiniTadak() {
   const { ready, tracks } = getMicrophoneAndCameraTracks();
   const agoraOptions = { userInfo, ready, tracks, agoraAppId, agoraToken, uuid, agoraType: PAGE_NAME.tadak };
   const { agoraUsers, isStreaming, toggleIsStreaming } = useAgora(agoraOptions);
+  const [isSideBar, toggleIsSideBar] = useToggle(false);
 
   if (!isStreaming) {
     return (
@@ -33,11 +36,19 @@ export default function MiniTadak() {
   }
 
   return (
-    <div className="w(100%) h(100%)">
+    <div className="w(100%) h(100%) hbox">
       {tracks && (
         <>
-          <AgoraVideoCardList agoraUsers={agoraUsers} tracks={tracks} />
-          <VideoController tracks={tracks} toggleIsStreaming={toggleIsStreaming} uuid={uuid} ownerId={owner?.id} />
+          <AgoraVideoCardList agoraUsers={agoraUsers} tracks={tracks} isSideBar={isSideBar} />
+          <MiniTadakSideBar isSideBar={isSideBar} />
+          <VideoController
+            tracks={tracks}
+            toggleIsStreaming={toggleIsStreaming}
+            isSideBar={isSideBar}
+            toggleIsSideBar={toggleIsSideBar}
+            uuid={uuid}
+            ownerId={owner?.id}
+          />
         </>
       )}
     </div>
