@@ -1,17 +1,17 @@
 interface SideBarProps {
-  topMenus: React.ReactNode;
-  bottomMenus: React.ReactNode;
+  tabMenu: React.ReactNode;
+  tabContent: React.ReactNode;
 }
 
 const containerStyle = `w(25rem) h(100vh) p(10) bg(#dff9fb) bl(1px/#ecf0f1)`;
-const topMenuStyle = ``;
-const bottomMenuStyle = ``;
+const tabMenuStyle = ``;
+const tabContentStyle = ``;
 
-const SideBar = ({ topMenus, bottomMenus }: SideBarProps): JSX.Element => {
+const SideBar = ({ tabMenu, tabContent }: SideBarProps): JSX.Element => {
   return (
     <div className={containerStyle}>
-      <div className={topMenuStyle}>{topMenus}</div>
-      <div className={bottomMenuStyle}>{bottomMenus}</div>
+      <div className={tabMenuStyle}>{tabMenu}</div>
+      <div className={tabContentStyle}>{tabContent}</div>
     </div>
   );
 };

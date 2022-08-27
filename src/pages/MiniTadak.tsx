@@ -10,7 +10,7 @@ import { getMicrophoneAndCameraTracks } from 'src/agora/config';
 import useAgora from 'src/hooks/useAgora';
 import { PAGE_NAME } from 'src/utils/constant';
 import { RoomType } from 'src/types';
-import MiniTadakSideBar from 'src/components/MiniTadakSideBar';
+import MiniTadakSideBar from 'src/components/sidebar/MiniTadak';
 import useToggle from 'src/hooks/useToggle';
 
 type LocationStateType = {
