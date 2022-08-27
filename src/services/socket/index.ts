@@ -6,6 +6,10 @@ const options: Partial<ManagerOptions & SocketOptions> = {
   transports: ['websocket'],
 };
 
+type SocketMessageType = {
+  [key: string]: string;
+};
+
 const socketUrl = process.env.REACT_APP_SOCKET_SERVER_URL || '/';
 
 const socket = (function (url, opts) {
@@ -37,7 +41,19 @@ const socket = (function (url, opts) {
     return false;
   }
 
-  return { init, disconnect, isDisconnected };
+  function emitEvent(eventName: string, message: SocketMessageType) {
+    _socket.emit(eventName, message);
+  }
+
+  function listenEvent(eventName: string, cb: (...args: any[]) => void) {
+    _socket.on(eventName, cb);
+  }
+
+  function removeListenEvent(eventName: string) {
+    _socket.removeListener(eventName);
+  }
+
+  return { init, disconnect, isDisconnected, emitEvent, listenEvent, removeListenEvent };
 })(socketUrl, options);
 
 export default socket;
