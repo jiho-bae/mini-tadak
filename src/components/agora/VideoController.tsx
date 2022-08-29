@@ -1,14 +1,14 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState } from 'react';
 import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash } from 'react-icons/fa';
 import { MdOutlineExitToApp, MdScreenShare, MdStopScreenShare, MdChat, MdChatBubble } from 'react-icons/md';
 import { ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-react';
 import { useNavigate } from 'react-router-dom';
 
+import CircleButton from '../common/CircleButton';
 import ScreenShare from './ScreenShare';
 
 import useToggle from 'src/hooks/useToggle';
 import { getClient } from 'src/agora/config';
-import CircleButton from '../common/CircleButton';
 
 const buttonContainerStyle = `w(100%) h(10%) absolute bottom(1.5rem)`;
 const videoControlsStyle = 'pack';
@@ -17,20 +17,12 @@ const chatButtonStyle = 'pack';
 interface VideoControllerProps {
   tracks: [IMicrophoneAudioTrack, ICameraVideoTrack];
   isSideBar: boolean;
-  toggleIsStreaming: () => void;
   toggleIsSideBar: () => void;
   uuid: string;
   ownerId: number | undefined;
 }
 
-const VideoController = ({
-  tracks,
-  isSideBar,
-  toggleIsStreaming,
-  toggleIsSideBar,
-  uuid,
-  ownerId,
-}: VideoControllerProps): JSX.Element => {
+const VideoController = ({ tracks, isSideBar, toggleIsSideBar, uuid, ownerId }: VideoControllerProps): JSX.Element => {
   const navigate = useNavigate();
   const client = getClient();
   const [trackState, setTrackState] = useState({ video: false, audio: false });
@@ -53,23 +45,6 @@ const VideoController = ({
       if (trackState.video) await client.publish(myVideoTrack);
     }
   };
-
-  const leaveAgoraChannel = useCallback(async () => {
-    await client.leave();
-    client.removeAllListeners();
-    myAudioTrack.close();
-    myVideoTrack.close();
-
-    toggleIsStreaming();
-  }, [client, myAudioTrack, myVideoTrack, toggleIsStreaming]);
-
-  //   useEffect(() => {
-  //     return history.listen(() => {
-  //       if (history.action === 'POP') {
-  //         leaveChannel();
-  //       }
-  //     });
-  //   }, [history, leaveChannel]);
 
   return (
     <div className={buttonContainerStyle}>
@@ -102,7 +77,6 @@ const VideoController = ({
         <CircleButton
           icon={<MdOutlineExitToApp fill="white" />}
           onClick={() => {
-            leaveAgoraChannel();
             navigate('/main', { replace: true });
           }}
         />

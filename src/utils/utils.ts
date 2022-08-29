@@ -1,4 +1,11 @@
+import { ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-react';
 import { CANVAS } from './constant';
+
+type TracksType = [IMicrophoneAudioTrack, ICameraVideoTrack];
+
+export function isTracks(tracks: TracksType | null): tracks is TracksType {
+  return (tracks as TracksType)[0] !== undefined;
+}
 
 export const isEmail = (email: string): boolean => {
   const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;

@@ -8,7 +8,7 @@ import MiniTadakSideBar from 'src/components/sidebar/MiniTadak';
 import Loader from 'src/components/Loader';
 
 import { userState } from 'src/hooks/recoil/user/atom';
-import { getMicrophoneAndCameraTracks } from 'src/agora/config';
+import { getClient, getMicrophoneAndCameraTracks } from 'src/agora/config';
 import useToggle from 'src/hooks/useToggle';
 import useAgora from 'src/hooks/useAgora';
 import socket from 'src/services/socket';
@@ -18,6 +18,7 @@ import { PAGE_NAME } from 'src/utils/constant';
 import { RoomType } from 'src/types';
 import { participantState } from 'src/hooks/recoil/participant/atom';
 import ParticipantType from 'src/types/participant';
+import { isTracks } from 'src/utils/utils';
 
 type LocationStateType = {
   state: RoomType;
@@ -31,7 +32,8 @@ export default function MiniTadak() {
   const setParticipants = useSetRecoilState(participantState);
   const { ready, tracks } = getMicrophoneAndCameraTracks();
   const agoraOptions = { userInfo, ready, tracks, agoraAppId, agoraToken, uuid, agoraType: PAGE_NAME.tadak };
-  const { agoraUsers, isStreaming, toggleIsStreaming } = useAgora(agoraOptions);
+  const { agoraUsers, isStreaming } = useAgora(agoraOptions);
+  const client = getClient();
   const [isSideBar, toggleIsSideBar] = useToggle(false);
 
   const updateParticipants = useCallback(
@@ -44,8 +46,18 @@ export default function MiniTadak() {
   const leaveSocketRoom = useCallback(() => {
     socket.emitEvent(SocketEvents.leaveRoom, { uuid });
     socket.clearAllListener();
+
     postLeaveRoom(uuid);
   }, [uuid]);
+
+  const leaveAgoraChannel = useCallback(async () => {
+    await client.leave();
+    client.removeAllListeners();
+
+    if (!isTracks(tracks)) return;
+    tracks[0].close();
+    tracks[1].close();
+  }, [client, tracks]);
 
   const joinSocketRoom = useCallback(() => {
     if (!userInfo.nickname) return;
@@ -60,14 +72,17 @@ export default function MiniTadak() {
     };
 
     socket.emitEvent(SocketEvents.joinRoom, socketJoinPayload);
-  }, [userInfo, maxHead, uuid]);
+    socket.listenEvent(SocketEvents.receiveUserList, updateParticipants);
+  }, [userInfo, maxHead, uuid, updateParticipants]);
 
   useEffect(() => {
     joinSocketRoom();
-    socket.listenEvent(SocketEvents.receiveUserList, updateParticipants);
 
-    return leaveSocketRoom;
-  }, [joinSocketRoom, leaveSocketRoom, updateParticipants]);
+    return () => {
+      leaveSocketRoom();
+      leaveAgoraChannel();
+    };
+  }, [joinSocketRoom, leaveSocketRoom, leaveAgoraChannel]);
 
   if (!isStreaming) {
     return (
@@ -85,7 +100,6 @@ export default function MiniTadak() {
           <MiniTadakSideBar isSideBar={isSideBar} uuid={uuid} />
           <VideoController
             tracks={tracks}
-            toggleIsStreaming={toggleIsStreaming}
             isSideBar={isSideBar}
             toggleIsSideBar={toggleIsSideBar}
             uuid={uuid}
