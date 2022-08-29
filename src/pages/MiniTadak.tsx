@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import AgoraVideoCardList from 'src/components/agora/VideoCardList';
 import VideoController from 'src/components/agora/VideoController';
@@ -16,6 +16,8 @@ import { postLeaveRoom } from 'src/apis';
 import { SocketEvents } from 'src/services/socket/socketEvents';
 import { PAGE_NAME } from 'src/utils/constant';
 import { RoomType } from 'src/types';
+import { participantState } from 'src/hooks/recoil/participant/atom';
+import ParticipantType from 'src/types/participant';
 
 type LocationStateType = {
   state: RoomType;
@@ -26,10 +28,18 @@ export default function MiniTadak() {
     state: { agoraAppId, agoraToken, uuid, owner, maxHeadcount: maxHead },
   } = useLocation() as LocationStateType;
   const userInfo = useRecoilValue(userState);
+  const setParticipants = useSetRecoilState(participantState);
   const { ready, tracks } = getMicrophoneAndCameraTracks();
   const agoraOptions = { userInfo, ready, tracks, agoraAppId, agoraToken, uuid, agoraType: PAGE_NAME.tadak };
   const { agoraUsers, isStreaming, toggleIsStreaming } = useAgora(agoraOptions);
   const [isSideBar, toggleIsSideBar] = useToggle(false);
+
+  const updateParticipants = useCallback(
+    (userList: { [key: string]: ParticipantType }) => {
+      setParticipants({ ...userList });
+    },
+    [setParticipants],
+  );
 
   const leaveSocketRoom = useCallback(() => {
     socket.emitEvent(SocketEvents.leaveRoom, { uuid });
@@ -54,8 +64,10 @@ export default function MiniTadak() {
 
   useEffect(() => {
     joinSocketRoom();
+    socket.listenEvent(SocketEvents.receiveUserList, updateParticipants);
+
     return leaveSocketRoom;
-  }, [joinSocketRoom, leaveSocketRoom]);
+  }, [joinSocketRoom, leaveSocketRoom, updateParticipants]);
 
   if (!isStreaming) {
     return (
