@@ -9,7 +9,7 @@ import { isEmpty } from 'src/utils/utils';
 import useInput from 'src/hooks/useInput';
 import { postLogin, PostLoginResponse } from 'src/apis';
 import afterFetcher from 'src/apis/afterFetcher';
-import { auth } from 'src/apis/auth';
+import { auth } from 'src/services/auth';
 import { userState } from 'src/hooks/recoil/user/atom';
 import { useToast } from 'src/hooks/useToast';
 import { PATH, TOAST_MESSAGE } from 'src/utils/constant';

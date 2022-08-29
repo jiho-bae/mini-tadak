@@ -1,4 +1,4 @@
-import { auth } from './auth';
+import { auth } from '../services/auth';
 
 const emailTail = process.env.REACT_APP_EMAIL_TAIL;
 const pwdTail = process.env.REACT_APP_PWD_TAIL;

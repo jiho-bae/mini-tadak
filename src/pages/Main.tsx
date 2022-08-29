@@ -12,15 +12,16 @@ import { userState } from 'src/hooks/recoil/user/atom';
 import { useToast } from 'src/hooks/useToast';
 import { enterRoom, redirectPage } from 'src/utils/history';
 import { ErrorResponse, RoomType } from 'src/types';
-import { auth } from 'src/apis/auth';
-import { getRoom, getRoomByUuid, postLogout, ResponseGetRoomData } from 'src/apis';
+import { auth } from 'src/services/auth';
+import { getRoom, getRoomByUuid, postEnterRoom, postLogout, ResponseGetRoomData } from 'src/apis';
 import { INFINITE_SCROLL, TOAST_MESSAGE } from 'src/utils/constant';
 import afterFetcher from 'src/apis/afterFetcher';
 import { TAB_NAME } from 'src/utils/constant';
 import { getRoomQueryObj } from 'src/apis/apiUtils';
 import useInput from 'src/hooks/useInput';
 import useDebounce from 'src/hooks/useDebounce';
-import { LocalStorage } from 'src/utils/localStorage';
+import socket from 'src/services/socket';
+import { SocketEvents } from 'src/services/socket/socketEvents';
 
 const tabWrapperStyle = 'pack mt(1.8rem) w(100%) relative mb(1.8rem) gap(10) @w(~460):vbox';
 
@@ -36,6 +37,7 @@ export default function Main() {
   const [user, setUser] = useRecoilState(userState);
   const { errorToast } = useToast();
   const currentPage = useRef(1);
+  const clickedRoomRef = useRef<RoomType>();
   const endRef = useRef<HTMLDivElement>(null);
 
   const onClickMiniTadakTab = () => setTabState({ minitadak: true, campfire: false });
@@ -81,9 +83,33 @@ export default function Main() {
     return nowHeadcount <= maxHeadcount;
   }, []);
 
+  const checkAdmissionBySocket = useCallback(
+    (uuid: string, nickname: string) => socket.emitEvent(SocketEvents.canIEnter, { uuid, nickname }),
+    [],
+  );
+
+  const enterClickedRoom = useCallback(
+    (isAdmin: boolean) => {
+      if (!isAdmin) {
+        clickedRoomRef.current = undefined;
+        return;
+      }
+      if (!clickedRoomRef.current) return;
+
+      const roomInfo = clickedRoomRef.current as RoomType;
+      const { uuid } = roomInfo;
+
+      postEnterRoom(uuid);
+      enterRoom({ uuid, roomInfo, navigate });
+    },
+    [navigate],
+  );
+
   const onClickRoomCard = useCallback(
     async (e: any) => {
       const roomCard = e.target.closest('.room-card');
+      if (!roomCard) return;
+
       const { cardIdx } = roomCard.dataset;
       const { uuid } = rooms[cardIdx];
       const fetchResult = await getRoomByUuid(uuid);
@@ -96,14 +122,15 @@ export default function Main() {
             return;
           }
 
-          enterRoom({ uuid, roomInfo: data, navigate });
+          clickedRoomRef.current = data;
+          checkAdmissionBySocket(data.uuid, user.nickname as string);
         },
         onError: (errorData: ErrorResponse) => {
           errorToast(errorData.message);
         },
       });
     },
-    [rooms, canIEnterRoom, errorToast, navigate],
+    [rooms, user, checkAdmissionBySocket, canIEnterRoom, errorToast],
   );
 
   const addNewPage = useCallback(() => {
@@ -138,6 +165,12 @@ export default function Main() {
 
     return () => roomObserver.disconnect();
   }, [addNewPage, rooms]);
+
+  useEffect(() => {
+    if (socket.isDisconnected()) socket.init();
+    socket.removeListenEvent(SocketEvents.youCanEnter);
+    socket.listenEvent(SocketEvents.youCanEnter, enterClickedRoom);
+  }, [enterClickedRoom]);
 
   return (
     <main className="vbox w(80%)">

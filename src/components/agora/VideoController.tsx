@@ -1,79 +1,64 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState } from 'react';
 import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash } from 'react-icons/fa';
-import { MdOutlineExitToApp, MdScreenShare, MdStopScreenShare } from 'react-icons/md';
+import { MdOutlineExitToApp, MdScreenShare, MdStopScreenShare, MdChat, MdChatBubble } from 'react-icons/md';
 import { ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-react';
 import { useNavigate } from 'react-router-dom';
 
-import useToggle from 'src/hooks/useToggle';
-import { getClient } from 'src/agora/config';
 import CircleButton from '../common/CircleButton';
 import ScreenShare from './ScreenShare';
 
-const buttonContainerStyle = 'w(100%) h(10%) relative';
+import useToggle from 'src/hooks/useToggle';
+import { getClient } from 'src/agora/config';
+import { toggleTrack } from 'src/agora/util';
+
+const buttonContainerStyle = `w(100%) h(10%) absolute bottom(1.5rem)`;
 const videoControlsStyle = 'pack';
-const getOutButtonStyle = 'fixed top(0) top(10) right(10)';
+const chatButtonStyle = 'pack';
 
 interface VideoControllerProps {
   tracks: [IMicrophoneAudioTrack, ICameraVideoTrack];
-  toggleIsStreaming: () => void;
+  isSideBar: boolean;
+  toggleIsSideBar: () => void;
   uuid: string;
   ownerId: number | undefined;
 }
 
-const VideoController = ({ tracks, toggleIsStreaming, uuid, ownerId }: VideoControllerProps): JSX.Element => {
+const VideoController = ({ tracks, isSideBar, toggleIsSideBar, uuid, ownerId }: VideoControllerProps): JSX.Element => {
   const navigate = useNavigate();
   const client = getClient();
   const [trackState, setTrackState] = useState({ video: false, audio: false });
   const [isScreenShare, toggleIsScreenShare] = useToggle(false);
   const [myAudioTrack, myVideoTrack] = tracks;
 
-  const mute = async (type: 'audio' | 'video') => {
-    if (type === 'audio') {
-      await myAudioTrack.setEnabled(!trackState.audio);
+  const getOutButtonStyle = `fixed top(10) right(${isSideBar ? '26rem' : '1rem'})`;
+
+  const toggleTrackState = (type: 'audio' | 'video') => {
+    return () => {
       setTrackState((ps) => {
-        return { ...ps, audio: !ps.audio };
+        const newState = type === 'audio' ? !ps.audio : !ps.video;
+        return { ...ps, [type]: newState };
       });
-    } else if (type === 'video') {
-      await myVideoTrack.setEnabled(!trackState.video);
-      setTrackState((ps) => {
-        return { ...ps, video: !ps.video };
-      });
-      if (trackState.video) await client.publish(myVideoTrack);
-    }
+    };
   };
-
-  const leaveAgoraChannel = useCallback(async () => {
-    await client.leave();
-    client.removeAllListeners();
-    myAudioTrack.close();
-    myVideoTrack.close();
-
-    toggleIsStreaming();
-  }, [client, myAudioTrack, myVideoTrack, toggleIsStreaming]);
-
-  //   useEffect(() => {
-  //     return history.listen(() => {
-  //       if (history.action === 'POP') {
-  //         leaveChannel();
-  //       }
-  //     });
-  //   }, [history, leaveChannel]);
 
   return (
     <div className={buttonContainerStyle}>
       <div className={videoControlsStyle}>
         <CircleButton
           icon={trackState.audio ? <FaMicrophone fill="white" /> : <FaMicrophoneSlash />}
-          onClick={() => mute('audio')}
+          onClick={() => toggleTrack(myAudioTrack, trackState.audio, toggleTrackState('audio'))}
         />
         <CircleButton
           icon={trackState.video ? <FaVideo fill="white" /> : <FaVideoSlash />}
-          onClick={() => mute('video')}
+          onClick={() => toggleTrack(myVideoTrack, trackState.video, toggleTrackState('video'))}
         />
         <CircleButton
           icon={isScreenShare ? <MdScreenShare fill="white" /> : <MdStopScreenShare />}
           onClick={toggleIsScreenShare}
         />
+        <div className={chatButtonStyle}>
+          <CircleButton icon={isSideBar ? <MdChatBubble /> : <MdChat fill="white" />} onClick={toggleIsSideBar} />
+        </div>
         {isScreenShare && (
           <ScreenShare
             client={client}
@@ -87,7 +72,6 @@ const VideoController = ({ tracks, toggleIsStreaming, uuid, ownerId }: VideoCont
         <CircleButton
           icon={<MdOutlineExitToApp fill="white" />}
           onClick={() => {
-            leaveAgoraChannel();
             navigate('/main', { replace: true });
           }}
         />

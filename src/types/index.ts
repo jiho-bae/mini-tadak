@@ -3,6 +3,7 @@ import RoomType from './room';
 import UserType from './user';
 import { HTTPResponse, ErrorResponse } from './httpResponse';
 import { ToastType, ToastMessageType, ToastActionType } from './toast';
+import ChatType from './chat';
 
 export type {
   DevFieldType,
@@ -13,4 +14,5 @@ export type {
   ToastType,
   ToastMessageType,
   ToastActionType,
+  ChatType,
 };

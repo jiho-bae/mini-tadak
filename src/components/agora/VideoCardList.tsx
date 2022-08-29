@@ -4,17 +4,17 @@ import { useRecoilValue } from 'recoil';
 
 import AgoraVideoCard from './VideoCard';
 
-const videoContainerStyle = 'pack h(90%)';
-
 interface VideoCardListProps {
   agoraUsers: IAgoraRTCRemoteUser[];
   tracks: [IMicrophoneAudioTrack, ICameraVideoTrack];
+  isSideBar: boolean;
 }
 
-const VideoCardList = ({ agoraUsers, tracks }: VideoCardListProps): JSX.Element => {
+const VideoCardList = ({ agoraUsers, tracks, isSideBar }: VideoCardListProps): JSX.Element => {
   const [myAudioTrack, myVideoTrack] = tracks;
   const userInfo = useRecoilValue(userState);
   const displayName = `${userInfo.nickname}(나)`;
+  const videoContainerStyle = `pack w(calc(100%-${isSideBar ? '25rem' : '0px'})) h(90%)`;
   const videoGridStyle = `p(20) grid grid-cols(${Math.min(agoraUsers.length + 1, 3)}) gap(10)`;
 
   return (

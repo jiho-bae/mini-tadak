@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { UserType } from '../types';
 import { getClient } from '../agora/config';
 import { IAgoraRTCRemoteUser, ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-sdk-ng';
-import { userPublished, userUnpublished, userChanged, muteTrack, publishTrack } from '../agora/util';
+import { userPublished, userUnpublished, userChanged, muteAllTrack, publishTrack } from '../agora/util';
 import useToggle from './useToggle';
 
 type UseAgoraProps = {
@@ -56,7 +56,7 @@ function useAgora({
   const startAgora = useCallback(async () => {
     await client.join(agoraAppId, uuid, agoraToken, encodeURI(userInfo.nickname ?? ''));
     await publishTrack(client, track || tracks);
-    await muteTrack({ track, tracks });
+    await muteAllTrack({ track, tracks });
 
     toggleIsStreaming();
   }, [uuid, agoraAppId, agoraToken, client, track, tracks, userInfo, toggleIsStreaming]);
