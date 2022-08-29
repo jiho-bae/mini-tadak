@@ -66,7 +66,7 @@ export const publishTrack = async (
   track: [IMicrophoneAudioTrack, ICameraVideoTrack] | IMicrophoneAudioTrack | null | undefined,
 ) => track && (await client.publish(track));
 
-export const muteTrack = async ({ tracks, track }: ListenTrackType) => {
+export const muteAllTrack = async ({ tracks, track }: ListenTrackType) => {
   if (tracks) {
     await tracks[1].setEnabled(false);
     await tracks[0].setEnabled(false);
@@ -75,4 +75,13 @@ export const muteTrack = async ({ tracks, track }: ListenTrackType) => {
   if (track) {
     await track.setEnabled(false);
   }
+};
+
+export const toggleTrack = async (
+  track: IMicrophoneAudioTrack | ICameraVideoTrack,
+  trackState: boolean,
+  toggleTrackState: () => void,
+) => {
+  await track.setEnabled(!trackState);
+  toggleTrackState();
 };

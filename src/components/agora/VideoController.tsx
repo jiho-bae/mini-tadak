@@ -9,6 +9,7 @@ import ScreenShare from './ScreenShare';
 
 import useToggle from 'src/hooks/useToggle';
 import { getClient } from 'src/agora/config';
+import { toggleTrack } from 'src/agora/util';
 
 const buttonContainerStyle = `w(100%) h(10%) absolute bottom(1.5rem)`;
 const videoControlsStyle = 'pack';
@@ -31,19 +32,13 @@ const VideoController = ({ tracks, isSideBar, toggleIsSideBar, uuid, ownerId }: 
 
   const getOutButtonStyle = `fixed top(10) right(${isSideBar ? '26rem' : '1rem'})`;
 
-  const mute = async (type: 'audio' | 'video') => {
-    if (type === 'audio') {
-      await myAudioTrack.setEnabled(!trackState.audio);
+  const toggleTrackState = (type: 'audio' | 'video') => {
+    return () => {
       setTrackState((ps) => {
-        return { ...ps, audio: !ps.audio };
+        const newState = type === 'audio' ? !ps.audio : !ps.video;
+        return { ...ps, [type]: newState };
       });
-    } else if (type === 'video') {
-      await myVideoTrack.setEnabled(!trackState.video);
-      setTrackState((ps) => {
-        return { ...ps, video: !ps.video };
-      });
-      if (trackState.video) await client.publish(myVideoTrack);
-    }
+    };
   };
 
   return (
@@ -51,11 +46,11 @@ const VideoController = ({ tracks, isSideBar, toggleIsSideBar, uuid, ownerId }: 
       <div className={videoControlsStyle}>
         <CircleButton
           icon={trackState.audio ? <FaMicrophone fill="white" /> : <FaMicrophoneSlash />}
-          onClick={() => mute('audio')}
+          onClick={() => toggleTrack(myAudioTrack, trackState.audio, toggleTrackState('audio'))}
         />
         <CircleButton
           icon={trackState.video ? <FaVideo fill="white" /> : <FaVideoSlash />}
-          onClick={() => mute('video')}
+          onClick={() => toggleTrack(myVideoTrack, trackState.video, toggleTrackState('video'))}
         />
         <CircleButton
           icon={isScreenShare ? <MdScreenShare fill="white" /> : <MdStopScreenShare />}
