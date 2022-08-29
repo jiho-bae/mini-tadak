@@ -7,7 +7,7 @@ const options: Partial<ManagerOptions & SocketOptions> = {
 };
 
 type SocketMessageType = {
-  [key: string]: string;
+  [key: string]: string | object | number;
 };
 
 const socketUrl = process.env.REACT_APP_SOCKET_SERVER_URL || '/';
@@ -53,7 +53,11 @@ const socket = (function (url, opts) {
     _socket.removeListener(eventName);
   }
 
-  return { init, disconnect, isDisconnected, emitEvent, listenEvent, removeListenEvent };
+  function clearAllListener() {
+    _socket.removeAllListeners();
+  }
+
+  return { init, disconnect, isDisconnected, emitEvent, listenEvent, removeListenEvent, clearAllListener };
 })(socketUrl, options);
 
 export default socket;
