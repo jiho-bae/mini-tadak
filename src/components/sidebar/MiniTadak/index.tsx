@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 
 interface MiniTadakSideBarProps {
   isSideBar: boolean;
+  uuid: string;
 }
 
 const initialTabState = {
@@ -12,7 +13,7 @@ const initialTabState = {
   isParticipant: true,
 };
 
-export default function MiniTadakSideBar({ isSideBar }: MiniTadakSideBarProps) {
+export default function MiniTadakSideBar({ isSideBar, uuid }: MiniTadakSideBarProps) {
   const [tabState, setTabState] = useState(initialTabState);
 
   const onClickParticipantTab = useCallback(() => {
@@ -32,7 +33,7 @@ export default function MiniTadakSideBar({ isSideBar }: MiniTadakSideBarProps) {
       tabMenu={
         <TabMenu tabState={tabState} onClickParticipantTab={onClickParticipantTab} onClickChatTab={onClickChatTab} />
       }
-      tabContent={<TabContent />}
+      tabContent={<TabContent tabState={tabState} uuid={uuid} />}
     />
   );
 }
