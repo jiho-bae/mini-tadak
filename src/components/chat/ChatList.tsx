@@ -45,6 +45,8 @@ const ChatList = ({ uuid, chats, setChats, roomType }: ChatListProps): JSX.Eleme
   const sendMessage = useCallback(() => {
     if (!message) return;
     const myMessage = { type: 'string', nickname: nickname as string, message, uuid };
+    scrollRef.current = true;
+
     socket.emitEvent(SocketEvents.sendMsg, myMessage);
     onResetMessage();
   }, [onResetMessage, nickname, message, uuid]);
