@@ -5,7 +5,7 @@ import ChatCard from './ChatCard';
 
 import socket from 'src/services/socket';
 import { SocketEvents } from 'src/services/socket/socketEvents';
-import { INPUT, PLACEHOLDER_TXT, KEY_PRESS, CHAT_BLOCK_TIME } from 'src/utils/constant';
+import { INPUT, PLACEHOLDER_TXT, KEY_PRESS, CHAT_BLOCK_TIME, TOAST_MESSAGE } from 'src/utils/constant';
 import useInput from 'src/hooks/useInput';
 import { userState } from 'src/hooks/recoil/user/atom';
 import { useRecoilValue } from 'recoil';
@@ -13,6 +13,7 @@ import { UserType } from 'src/types';
 import { ChatType } from 'src/types';
 import { isSpammer, isScrollable, isResetTime } from 'src/utils/guard';
 import { getResetTime } from 'src/utils/utils';
+import { useToast } from 'src/hooks/useToast';
 
 interface ChatListProps {
   chats: Array<ChatType>;
@@ -39,6 +40,7 @@ const ChatList = ({ uuid, chats, setChats, roomType }: ChatListProps): JSX.Eleme
   const user = useRecoilValue(userState) as UserType;
   const { nickname } = user;
   const [message, onChangeMessage, onResetMessage] = useInput('');
+  const { successToast, errorToast } = useToast();
   const ulRef = useRef<HTMLUListElement>(null);
   const firstRender = useRef(true);
   const scrollRef = useRef(true);
@@ -57,31 +59,37 @@ const ChatList = ({ uuid, chats, setChats, roomType }: ChatListProps): JSX.Eleme
   const setBlockTimer = useCallback(() => {
     setTimeout(() => {
       blockTimeRef.current = false;
+      successToast(TOAST_MESSAGE.notSpammerUser);
     }, CHAT_BLOCK_TIME.ms);
-  }, []);
+  }, [successToast]);
 
   const onKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      e.preventDefault();
-      if (e.key !== KEY_PRESS.enter) return;
-      if (e.shiftKey) return;
+      if (e.key === KEY_PRESS.enter) {
+        if (e.shiftKey) return;
+        e.preventDefault();
 
-      if (blockTimeRef.current) return;
-      if (isSpammer(timeRef)) {
-        blockTimeRef.current = true;
-        setBlockTimer();
-        return;
+        if (blockTimeRef.current) return;
+
+        if (isSpammer(timeRef)) {
+          blockTimeRef.current = true;
+
+          onResetMessage();
+          setBlockTimer();
+          errorToast(TOAST_MESSAGE.spammerUser);
+          return;
+        }
+
+        if (isResetTime(timeRef)) {
+          timeRef.current = getResetTime();
+        } else {
+          timeRef.current.count += 1;
+        }
+
+        sendMessage();
       }
-
-      if (isResetTime(timeRef)) {
-        timeRef.current = getResetTime();
-      } else {
-        timeRef.current.count += 1;
-      }
-
-      sendMessage();
     },
-    [sendMessage, setBlockTimer],
+    [sendMessage, setBlockTimer, onResetMessage, errorToast],
   );
 
   const onScrollMove = useCallback(() => {

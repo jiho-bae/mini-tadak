@@ -37,7 +37,7 @@ export const CHAT_BLOCK_TIME = { ms: 15 * 1000, s: 15 };
 export const CHAT_SPAMMER = {
   ms: 1 * 1000,
   s: 2,
-  count: 3 * 1000,
+  count: 3,
 };
 
 export const TOAST_TIME = 2000;
@@ -114,6 +114,8 @@ export const TOAST_MESSAGE = {
   introSky: '자세히 보시면 별이 반짝이고 별똥별이 떨어집니다...!',
   introEasterEgg: ' 아래 버튼을 클릭해서 모닥불을 피워주세요...!',
   introEasterEgg2: '불씨가 아직 살아있습니다...!',
+  spammerUser: `채팅 도배로 인해 ${CHAT_BLOCK_TIME.s}초간 채팅이 제한됩니다.`,
+  notSpammerUser: '이제 채팅을 이용하실 수 있습니다. \n도배하지 말아주세요!',
 };
 
 export const PLACEHOLDER_TXT = {
