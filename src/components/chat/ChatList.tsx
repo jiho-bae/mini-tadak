@@ -11,7 +11,7 @@ import { userState } from 'src/hooks/recoil/user/atom';
 import { useRecoilValue } from 'recoil';
 import { UserType } from 'src/types';
 import { ChatType } from 'src/types';
-import { isScrollable } from 'src/utils/utils';
+import { isScrollable } from 'src/utils/guard';
 
 interface ChatListProps {
   chats: Array<ChatType>;

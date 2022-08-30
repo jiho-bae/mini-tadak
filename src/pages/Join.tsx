@@ -6,7 +6,7 @@ import RectButton from 'src/components/common/RectButton';
 import useInput from 'src/hooks/useInput';
 import { userBaseJoinOptions } from 'src/apis/options';
 import { postJoin } from 'src/apis';
-import { isEmpty } from 'src/utils/utils';
+import { isEmpty } from 'src/utils/guard';
 import { useToast } from 'src/hooks/useToast';
 import afterFetcher from 'src/apis/afterFetcher';
 import { TOAST_MESSAGE, PATH } from 'src/utils/constant';

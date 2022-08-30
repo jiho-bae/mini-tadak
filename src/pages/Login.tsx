@@ -5,7 +5,7 @@ import AuthFormLayout from 'src/components/layout/AuthFormLayout';
 import RectButton from 'src/components/common/RectButton';
 
 import { userBaseLoginOptions } from 'src/apis/options';
-import { isEmpty } from 'src/utils/utils';
+import { isEmpty } from 'src/utils/guard';
 import useInput from 'src/hooks/useInput';
 import { postLogin, PostLoginResponse } from 'src/apis';
 import afterFetcher from 'src/apis/afterFetcher';
