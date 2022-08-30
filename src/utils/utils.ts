@@ -1,5 +1,9 @@
 import { CANVAS } from './constant';
 
+export const getResetTime = () => ({ chatTime: Date.now(), count: 1 });
+
+export const getMiliSecondsDiff = (afterTime: number, prevTime: number) => afterTime - prevTime;
+
 export const getPrevYear = (now: Date, number: number): Date => {
   const tomorrow = new Date(now.setDate(now.getDate() + 1));
   const prevYear = new Date(tomorrow.setFullYear(tomorrow.getFullYear() - number));

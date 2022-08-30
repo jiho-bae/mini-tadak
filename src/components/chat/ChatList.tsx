@@ -5,13 +5,14 @@ import ChatCard from './ChatCard';
 
 import socket from 'src/services/socket';
 import { SocketEvents } from 'src/services/socket/socketEvents';
-import { INPUT, PLACEHOLDER_TXT, KEY_PRESS } from 'src/utils/constant';
+import { INPUT, PLACEHOLDER_TXT, KEY_PRESS, CHAT_BLOCK_TIME } from 'src/utils/constant';
 import useInput from 'src/hooks/useInput';
 import { userState } from 'src/hooks/recoil/user/atom';
 import { useRecoilValue } from 'recoil';
 import { UserType } from 'src/types';
 import { ChatType } from 'src/types';
-import { isScrollable } from 'src/utils/guard';
+import { isSpammer, isScrollable, isResetTime } from 'src/utils/guard';
+import { getResetTime } from 'src/utils/utils';
 
 interface ChatListProps {
   chats: Array<ChatType>;
@@ -41,6 +42,8 @@ const ChatList = ({ uuid, chats, setChats, roomType }: ChatListProps): JSX.Eleme
   const ulRef = useRef<HTMLUListElement>(null);
   const firstRender = useRef(true);
   const scrollRef = useRef(true);
+  const timeRef = useRef({ chatTime: -1, count: 0 });
+  const blockTimeRef = useRef(false);
 
   const sendMessage = useCallback(() => {
     if (!message) return;
@@ -51,16 +54,34 @@ const ChatList = ({ uuid, chats, setChats, roomType }: ChatListProps): JSX.Eleme
     onResetMessage();
   }, [onResetMessage, nickname, message, uuid]);
 
+  const setBlockTimer = useCallback(() => {
+    setTimeout(() => {
+      blockTimeRef.current = false;
+    }, CHAT_BLOCK_TIME.ms);
+  }, []);
+
   const onKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === KEY_PRESS.enter) {
-        if (!e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
-        }
+      e.preventDefault();
+      if (e.key !== KEY_PRESS.enter) return;
+      if (e.shiftKey) return;
+
+      if (blockTimeRef.current) return;
+      if (isSpammer(timeRef)) {
+        blockTimeRef.current = true;
+        setBlockTimer();
+        return;
       }
+
+      if (isResetTime(timeRef)) {
+        timeRef.current = getResetTime();
+      } else {
+        timeRef.current.count += 1;
+      }
+
+      sendMessage();
     },
-    [sendMessage],
+    [sendMessage, setBlockTimer],
   );
 
   const onScrollMove = useCallback(() => {

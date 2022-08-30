@@ -1,6 +1,23 @@
 import { ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-react';
+import { CHAT_SPAMMER } from './constant';
+import { getMiliSecondsDiff } from './utils';
 
 type TracksType = [IMicrophoneAudioTrack, ICameraVideoTrack];
+
+type TimeRefType = React.MutableRefObject<{
+  chatTime: number;
+  count: number;
+}>;
+
+export const isResetTime = (timeRef: TimeRefType) =>
+  getMiliSecondsDiff(Date.now(), timeRef.current.chatTime) > CHAT_SPAMMER.ms;
+
+export const isSpammer = (timeRef: TimeRefType) => {
+  const { chatTime, count } = timeRef.current;
+  const secondsDiff = getMiliSecondsDiff(Date.now(), chatTime);
+
+  return secondsDiff <= CHAT_SPAMMER.ms && count >= CHAT_SPAMMER.count;
+};
 
 export const isScrollable = (clientHeight: number, scrollTop: number, scrollHeight: number) => {
   return clientHeight + scrollTop >= scrollHeight;

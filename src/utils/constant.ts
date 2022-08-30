@@ -32,6 +32,14 @@ export const INPUT = {
   chatMaxLen: 100,
 };
 
+export const TOKEN_EXPIRED_TIME = { ms: 180 * 1000, s: 180 };
+export const CHAT_BLOCK_TIME = { ms: 15 * 1000, s: 15 };
+export const CHAT_SPAMMER = {
+  ms: 1 * 1000,
+  s: 2,
+  count: 3 * 1000,
+};
+
 export const TOAST_TIME = 2000;
 
 export const SCREEN_SHARE_HEIGHT = 1080;

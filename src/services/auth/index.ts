@@ -1,5 +1,7 @@
 import { LocalStorage } from '../../utils/localStorage';
 import { getUserByToken } from '../../apis/index';
+import { getMiliSecondsDiff } from 'src/utils/utils';
+import { TOKEN_EXPIRED_TIME } from 'src/utils/constant';
 
 export type SetTokenParams = {
   accessToken: string;
@@ -16,10 +18,8 @@ export const auth = (function (setAuthFlag, clearAuthFlag) {
     if (!_token) return false;
     if (!_expiredTime) return false;
 
-    const current = Date.now();
-    const restTime = Math.floor((_expiredTime - current) / 1000);
-
-    return restTime >= 180;
+    const restTime = getMiliSecondsDiff(_expiredTime, Date.now());
+    return restTime >= TOKEN_EXPIRED_TIME.ms;
   }
 
   function hasAccessToken(isClearLocalStorage = false) {
