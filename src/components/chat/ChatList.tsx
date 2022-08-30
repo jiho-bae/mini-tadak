@@ -11,6 +11,7 @@ import { userState } from 'src/hooks/recoil/user/atom';
 import { useRecoilValue } from 'recoil';
 import { UserType } from 'src/types';
 import { ChatType } from 'src/types';
+import { isScrollable } from 'src/utils/utils';
 
 interface ChatListProps {
   chats: Array<ChatType>;
@@ -37,7 +38,9 @@ const ChatList = ({ uuid, chats, setChats, roomType }: ChatListProps): JSX.Eleme
   const user = useRecoilValue(userState) as UserType;
   const { nickname } = user;
   const [message, onChangeMessage, onResetMessage] = useInput('');
-  const scrollRef = useRef<HTMLUListElement>(null);
+  const ulRef = useRef<HTMLUListElement>(null);
+  const firstRender = useRef(true);
+  const scrollRef = useRef(true);
 
   const sendMessage = useCallback(() => {
     if (!message) return;
@@ -58,6 +61,16 @@ const ChatList = ({ uuid, chats, setChats, roomType }: ChatListProps): JSX.Eleme
     [sendMessage],
   );
 
+  const onScrollMove = useCallback(() => {
+    const { clientHeight, scrollTop, scrollHeight } = ulRef.current as HTMLUListElement;
+
+    if (!isScrollable(clientHeight, scrollTop, scrollHeight)) {
+      scrollRef.current = false;
+      return;
+    }
+    scrollRef.current = true;
+  }, []);
+
   const handleMessageReceive = useCallback(
     (chat: ChatType) => {
       setChats((prevState) => [...prevState, chat]);
@@ -71,15 +84,22 @@ const ChatList = ({ uuid, chats, setChats, roomType }: ChatListProps): JSX.Eleme
   }, [handleMessageReceive]);
 
   useEffect(() => {
-    const { current } = scrollRef;
-    if (current !== null) {
-      current.scrollTop = current.scrollHeight;
+    const ulDomRef = ulRef.current as HTMLUListElement;
+
+    if (firstRender.current) {
+      firstRender.current = false;
+      ulDomRef.scrollTop = ulDomRef.scrollHeight;
+      return;
+    }
+
+    if (scrollRef.current) {
+      ulDomRef.scrollTop = ulDomRef.scrollHeight;
     }
   }, [chats]);
 
   return (
     <div className={chatCardContainerStyle}>
-      <ul className={chatUlStyle} ref={scrollRef}>
+      <ul className={chatUlStyle} ref={ulRef} onScroll={onScrollMove}>
         {chats.length > 0 && chats.map((chat, idx) => <ChatCard key={idx} chat={chat} />)}
       </ul>
       <div className={lineStyle} />

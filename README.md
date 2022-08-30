@@ -18,7 +18,7 @@
 ### 몇가지 고민의 흔적
 
 - [인증 방식 개선 - refresh token 도입하기](https://tar-keyboard-2bc.notion.site/JWT-596bf75945f64a46b5b6fd01fc640c98)
-- 추가될 예정입니다.
+- [사이드바 채팅창 스크롤 관리하기](https://gobae.tistory.com/147)
 
 ### 각 페이지 소개
 

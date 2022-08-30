@@ -3,6 +3,10 @@ import { CANVAS } from './constant';
 
 type TracksType = [IMicrophoneAudioTrack, ICameraVideoTrack];
 
+export const isScrollable = (clientHeight: number, scrollTop: number, scrollHeight: number) => {
+  return clientHeight + scrollTop >= scrollHeight;
+};
+
 export function isTracks(tracks: TracksType | null): tracks is TracksType {
   return (tracks as TracksType)[0] !== undefined;
 }
