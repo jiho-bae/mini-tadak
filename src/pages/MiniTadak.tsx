@@ -18,7 +18,7 @@ import { PAGE_NAME } from 'src/utils/constant';
 import { RoomType } from 'src/types';
 import { participantState } from 'src/hooks/recoil/participant/atom';
 import ParticipantType from 'src/types/participant';
-import { isTracks } from 'src/utils/utils';
+import { isTracks } from 'src/utils/guard';
 
 type LocationStateType = {
   state: RoomType;
