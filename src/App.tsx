@@ -1,17 +1,42 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import MainLayout from './components/MainLayout';
-import Login from './pages/Login';
+import { useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+
+import MainLayout from './components/layout/MainLayout';
+import Router from './components/Router';
+
+import { auth } from './apis/auth';
+import { LocalStorage } from './utils/localStorage';
+import { getUserByToken } from './apis';
+import { userState } from './hooks/recoil/user/atom';
+import Toast from './components/Toast';
 
 function App() {
+  const navigate = useNavigate();
+  const setUser = useSetRecoilState(userState);
+
+  const getUser = useCallback(async () => {
+    const { isOk, data } = await getUserByToken();
+    if (isOk && data) {
+      auth.setAccessToken(data.token);
+      setUser(data.userInfo);
+      navigate('/main');
+    }
+  }, [navigate, setUser]);
+
+  useEffect(() => {
+    if (!LocalStorage.validateAuthFlag()) return;
+    if (!auth.hasAccessToken()) {
+      getUser();
+    }
+  }, [getUser]);
+
   return (
     <div className="App">
       <MainLayout>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Login />} />
-          </Routes>
-        </Router>
+        <Router />
       </MainLayout>
+      <Toast />
     </div>
   );
 }

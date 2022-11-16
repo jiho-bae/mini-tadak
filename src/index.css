@@ -26,9 +26,17 @@ body {
   overflow-wrap: break-word;
   tab-size: 4;
 }
+
 html,
 body {
   height: 100%;
+}
+html {
+  font-size: 62.5%;
+  line-height: 1.285;
+}
+body {
+  font-size: 1.6rem;
 }
 img,
 picture,
@@ -60,4 +68,24 @@ dir {
 .App {
   background-color: #d9afd9;
   background-image: linear-gradient(0deg, #d9afd9 0%, #97d9e1 100%);
+}
+input,
+select {
+  background-color: transparent;
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+#toast-fadeInOut {
+  animation: fade-in-out 3s ease-in-out;
 }

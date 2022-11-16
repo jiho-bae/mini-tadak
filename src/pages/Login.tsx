@@ -1,43 +1,78 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
+import { useSetRecoilState } from 'recoil';
 
-type LoginProps = {};
+import AuthFormLayout from '../components/layout/AuthFormLayout';
+import RectButton from '../components/common/RectButton';
 
-export default function Login({}: LoginProps) {
+import { userBaseLoginOptions } from '../apis/options';
+import { isEmpty } from '../utils/utils';
+import useInput from '../hooks/useInput';
+import { postLogin } from '../apis';
+import { auth } from '../apis/auth';
+import { userState } from '../hooks/recoil/user/atom';
+import { useToast } from '../hooks/useToast';
+import { TOAST_MESSAGE } from '../utils/constant';
+
+const linkOption = {
+  to: '/join',
+  text: '회원가입 하러가기',
+};
+
+export default function Login() {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState('');
+  const location = useLocation();
+  const passedUserId = location.state as string;
+  const setUser = useSetRecoilState(userState);
+  const [userId, onChangeUserId] = useInput(passedUserId ?? '');
+  const [password, onChangePassword] = useInput('');
+  const { successToast, errorToast } = useToast();
 
-  const onChangeUserId = (e: React.ChangeEvent<HTMLInputElement>) => setUserId(e.target.value);
+  const goToMain = () => navigate('/main');
 
-  const isEmptyUserId = (userId: string) => {
-    if (userId === '') {
-      alert('아이디를 입력하세요.');
-      return true;
-    }
-    return false;
-  };
-
-  const goToMain = (userId: string) => {
-    navigate('/main', { state: { userId } });
-  };
-
-  const onSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isEmptyUserId(userId)) {
+    if (isEmpty(userId)) {
+      errorToast(TOAST_MESSAGE.invalidFormatUserId);
+      return;
+    }
+    if (isEmpty(password)) {
+      errorToast(TOAST_MESSAGE.invalidFormatPwd);
       return;
     }
 
-    goToMain(userId);
+    const baseOption = userBaseLoginOptions(userId, password);
+    const { isOk, data } = await postLogin(baseOption);
+    if (isOk && data) {
+      auth.setAccessToken(data.token);
+      setUser(data.userInfo);
+      successToast(TOAST_MESSAGE.loginSuccess);
+      goToMain();
+      return;
+    }
+    errorToast(TOAST_MESSAGE.loginConfirm);
   };
 
   return (
-    <div className="@w(~375):w(150) @w(376~):w(360) h(200)  m(auto/auto) p(15) bg(white) r(10) vbox(center) gap(80)">
-      <h1 className="font(24) bold">미니타닥 로그인</h1>
-      <form onSubmit={onSubmitForm}>
-        <label htmlFor="user_id">아이디</label>
-        <input value={userId} onChange={onChangeUserId} id="user_id" className="m(0/5/0/5)" maxLength={12} />
-        <button className="p(5) r(5) bg(#ff6348) hover:bg(#70a1ff) c(white)">로그인</button>
-      </form>
-    </div>
+    <AuthFormLayout title={'미니타닥 로그인'} link={linkOption} onSubmitForm={onSubmitForm}>
+      <div className="vbox(right) gap(10)">
+        <div>
+          <label htmlFor="user_id">아이디</label>
+          <input value={userId} onChange={onChangeUserId} id="user_id" className="m(0/5/0/5)" maxLength={12} />
+        </div>
+        <div>
+          <label htmlFor="user_password">비밀번호</label>
+          <input
+            type="password"
+            value={password}
+            onChange={onChangePassword}
+            id="user_password"
+            className="m(0/5/0/5)"
+            maxLength={12}
+            autoComplete="on"
+          />
+        </div>
+      </div>
+      <RectButton buttonName="로그인" w="70" h="70" />
+    </AuthFormLayout>
   );
 }
